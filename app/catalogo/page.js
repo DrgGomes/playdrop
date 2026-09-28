@@ -138,11 +138,13 @@ export default function CatalogoPage() {
               return (
                 <div className="product-card" key={p.id}
                   style={marcado ? { border: '2px solid var(--primary)', boxShadow: 'var(--shadow)' } : {}}>
-                  {imagens[p.id] ? (
-                    <img className="product-img" src={imagens[p.id]} alt={p.titulo} />
-                  ) : (
-                    <div className="product-img" />
-                  )}
+                                    <Link href={`/produto/${p.id}`}>
+                    {imagens[p.id] ? (
+                      <img className="product-img" src={imagens[p.id]} alt={p.titulo} />
+                    ) : (
+                      <div className="product-img" />
+                    )}
+                  </Link>
                   <div className="product-info">
                     <div className="card-topo">
                       <div className="product-title">{p.titulo}</div>
