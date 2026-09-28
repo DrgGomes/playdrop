@@ -105,7 +105,8 @@ export default function CatalogoPage() {
       <header className="nav">
         <div className="container">
           <span className="nav-logo">PlayDrop</span>
-          <nav className="nav-links">
+                    <nav className="nav-links">
+            <Link href="/pedido">🛒 Ver pedido</Link>
             <Link href="/login">Entrar</Link>
           </nav>
         </div>
