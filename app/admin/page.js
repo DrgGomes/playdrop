@@ -61,10 +61,12 @@ export default function AdminPage() {
               <p>Custos fixos (DTF, camiseta, embalagem) e margem padrão.</p>
             </div>
           </Link>
-          <div className="admin-card">
-            <h3>📦 Pedidos</h3>
-            <p>Status, NFs e etiquetas. (Próximo bloco)</p>
-          </div>
+                    <Link href="/admin/pedidos">
+            <div className="admin-card">
+              <h3>📦 Pedidos</h3>
+              <p>Ver pedidos, alterar status e imprimir cupons.</p>
+            </div>
+          </Link>
           <div className="admin-card">
             <h3>📣 Novidades</h3>
             <p>Postar notícias e devoluções. (Próximo bloco)</p>
