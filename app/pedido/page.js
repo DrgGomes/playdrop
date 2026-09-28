@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../lib/supabaseClient';
+import { getCurrentUser, getProfile, signOut } from '../../lib/auth';
 
 function formatarValor(v) {
   const n = Number(v);
@@ -17,16 +18,47 @@ export default function PedidoPage() {
   const [nome, setNome] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
   const [observacoes, setObservacoes] = useState('');
+  const [usuario, setUsuario] = useState(null);
+  const [contaCarregando, setContaCarregando] = useState(true);
   const [carregando, setCarregando] = useState(true);
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState('');
   const [sucesso, setSucesso] = useState(null); // { numero, nome }
+  const [preenchidoDaConta, setPreenchidoDaConta] = useState(false);
 
   useEffect(() => {
     let carrinho = [];
     try { carrinho = JSON.parse(localStorage.getItem('playdrop_carrinho') || '[]'); } catch {}
     setItens(carrinho);
     setCarregando(false);
+
+    async function carregarConta() {
+      try {
+        const user = await getCurrentUser();
+        setUsuario(user);
+        if (user) {
+          let perfil = null;
+          try {
+            const { data: pf } = await getProfile(user.id);
+            perfil = pf;
+          } catch {}
+          const meta = user.user_metadata || {};
+          const nomeConta =
+            (perfil && (perfil.nome || perfil.nome_completo || perfil.full_name)) ||
+            meta.nome || meta.name || meta.full_name || '';
+          const zapConta =
+            (perfil && (perfil.whatsapp || perfil.telefone || perfil.celular || perfil.phone)) ||
+            meta.whatsapp || meta.phone || user.phone || '';
+          if (nomeConta || zapConta) {
+            setNome(nomeConta);
+            setWhatsapp(zapConta);
+            setPreenchidoDaConta(true);
+          }
+        }
+      } catch {}
+      setContaCarregando(false);
+    }
+    carregarConta();
   }, []);
 
   const total = itens.reduce((soma, i) => soma + (Number(i.preco_unitario) || 0) * (Number(i.quantidade) || 1), 0);
@@ -47,6 +79,11 @@ export default function PedidoPage() {
   function limparCarrinho() {
     setItens([]);
     localStorage.removeItem('playdrop_carrinho');
+  }
+
+  async function sair() {
+    await signOut();
+    window.location.href = '/';
   }
 
   async function finalizar(e) {
@@ -128,6 +165,18 @@ export default function PedidoPage() {
           <span className="nav-logo">PlayDrop</span>
           <nav className="nav-links">
             <Link href="/catalogo">Catálogo</Link>
+            <Link href="/pedido">🛒 Ver pedido{itens.length > 0 ? ` (${itens.length})` : ''}</Link>
+            {!contaCarregando && (
+              usuario ? (
+                <>
+                  <Link href="/conta">👤 Minha conta</Link>
+                  <button className="btn btn-sm btn-outline"
+                    style={{ color: '#fff', borderColor: 'rgba(255,255,255,.4)' }} onClick={sair}>Sair</button>
+                </>
+              ) : (
+                <Link href="/login">Entrar</Link>
+              )
+            )}
           </nav>
         </div>
       </header>
@@ -181,7 +230,13 @@ export default function PedidoPage() {
               <div className="ped-linha"><span>{totalItens} item(ns)</span><span>{formatarValor(total)}</span></div>
               <div className="ped-linha total"><span>Total</span><strong>{formatarValor(total)}</strong></div>
 
-              <form onSubmit={finalizar} style={{ marginTop: 18 }}>
+              {preenchidoDaConta && (
+                <p className="hint" style={{ marginTop: 10, marginBottom: 0 }}>
+                  ✓ Dados preenchidos da sua conta — edite se precisar.
+                </p>
+              )}
+
+              <form onSubmit={finalizar} style={{ marginTop: 14 }}>
                 <div className="field">
                   <span className="label">Seu nome</span>
                   <input value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Nome completo" />
