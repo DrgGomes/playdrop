@@ -249,3 +249,48 @@ table.list th { background: #f8fafc; font-weight: 700; font-size: 12px; text-tra
 .foto-preview img { width: 80px; height: 80px; object-fit: cover; border-radius: 8px; border: 1px solid var(--border); }
 .foto-preview .item button { position: absolute; top: -6px; right: -6px; width: 22px; height: 22px; border-radius: 50%; border: none; background: var(--danger); color: #fff; font-size: 12px; cursor: pointer; line-height: 1; }
 @media (max-width: 720px) { .form-grid { grid-template-columns: 1fr; } }
+/* ===== Catálogo com seleção (Lote 4) ===== */
+.card-topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 8px;
+}
+.card-topo .product-title { margin-bottom: 8px; }
+
+.check-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  background: #eef2ff;
+  color: #3730a3;
+  padding: 6px 10px;
+  border-radius: 999px;
+}
+.check-box input { width: 15px; height: 15px; accent-color: var(--primary); cursor: pointer; }
+
+.barra-flutuante {
+  position: fixed;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #0f172a;
+  color: #fff;
+  border-radius: 999px;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.45);
+  z-index: 50;
+  font-size: 14px;
+  font-weight: 700;
+}
+.barra-flutuante .btn-primary { margin: 0; }
+@media (max-width: 640px) {
+  .barra-flutuante { flex-wrap: wrap; justify-content: center; width: 92%; border-radius: 18px; text-align: center; }
+}
