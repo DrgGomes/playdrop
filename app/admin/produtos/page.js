@@ -105,8 +105,9 @@ export default function ProdutosAdminPage() {
                   <td>{variacoes[p.id] || 0}</td>
                   <td>{p.ativo ? <span className="badge badge-ok">Ativo</span> : <span className="badge badge-off">Inativo</span>}</td>
                   <td>
-                    <button className="btn btn-sm" style={{ background: '#fef2f2', color: 'var(--danger)' }}
-                      onClick={() => deletar(p.id)}>Excluir</button>
+                    <a href={`/admin/produtos/${p.id}`} className="btn btn-sm btn-outline" style={{ marginRight: 6 }}>Editar</a>
+  <button className="btn btn-sm" style={{ background: '#fef2f2', color: 'var(--danger)' }}
+    onClick={() => deletar(p.id)}>Excluir</button>
                   </td>
                 </tr>
               ))}
