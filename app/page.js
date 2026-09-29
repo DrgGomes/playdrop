@@ -1,4 +1,4 @@
-import HeaderCliente from '../components/HeaderCliente';
+import HeaderCliente from './components/HeaderCliente';
 import Link from 'next/link';
 
 export default function Home() {
