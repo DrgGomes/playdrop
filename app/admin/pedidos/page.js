@@ -54,18 +54,22 @@ export default function PedidosAdminPage() {
     await buscar();
   }
 
-  async function buscar() {
+    async function buscar() {
     setCarregando(true);
     setErro('');
-    const { data, error } = await supabase
-      .from('pedidos')
-      .select('*')
-      .order('numero', { ascending: false });
+    const { data, error } = await supabase.rpc('listar_pedidos');
     if (error) {
       setErro('Erro ao buscar pedidos: ' + error.message);
       setCarregando(false);
       return;
     }
+    const lista = Array.isArray(data) ? data : [];
+    setPedidos(lista);
+    const mapa = {};
+    lista.forEach((p) => { mapa[p.id] = p.qtd_itens || 0; });
+    setContItens(mapa);
+    setCarregando(false);
+  }
     setPedidos(data || []);
 
     const { data: its, error: errIts } = await supabase.from('pedido_itens').select('pedido_id');
