@@ -54,7 +54,7 @@ export default function PedidosAdminPage() {
     await buscar();
   }
 
-    async function buscar() {
+  async function buscar() {
     setCarregando(true);
     setErro('');
     const { data, error } = await supabase.rpc('listar_pedidos');
@@ -68,16 +68,6 @@ export default function PedidosAdminPage() {
     const mapa = {};
     lista.forEach((p) => { mapa[p.id] = p.qtd_itens || 0; });
     setContItens(mapa);
-    setCarregando(false);
-  }
-    setPedidos(data || []);
-
-    const { data: its, error: errIts } = await supabase.from('pedido_itens').select('pedido_id');
-    if (!errIts) {
-      const mapa = {};
-      (its || []).forEach((i) => { mapa[i.pedido_id] = (mapa[i.pedido_id] || 0) + 1; });
-      setContItens(mapa);
-    }
     setCarregando(false);
   }
 
