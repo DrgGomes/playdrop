@@ -87,7 +87,7 @@ export default function PedidoPage() {
     window.location.href = '/';
   }
 
-  async function finalizar(e) {
+    async function finalizar(e) {
     e.preventDefault();
     setErro('');
     if (!nome.trim()) { setErro('Informe seu nome.'); return; }
@@ -96,21 +96,7 @@ export default function PedidoPage() {
     setEnviando(true);
 
     try {
-      const { data: pedido, error: errPedido } = await supabase
-        .from('pedidos')
-        .insert({
-          nome_cliente: nome.trim(),
-          whatsapp: whatsapp.trim(),
-          observacoes: observacoes.trim(),
-          status: 'pendente',
-          total: total,
-        })
-        .select()
-        .single();
-      if (errPedido) throw errPedido;
-
-      const linhasItens = itens.map((i) => ({
-        pedido_id: pedido.id,
+      const itensJson = itens.map((i) => ({
         produto_id: i.produto_id || null,
         variacao_id: i.variacao_id || null,
         titulo: i.titulo || '',
@@ -120,11 +106,19 @@ export default function PedidoPage() {
         quantidade: Number(i.quantidade) || 1,
         preco_unitario: Number(i.preco_unitario) || 0,
       }));
-      const { error: errItens } = await supabase.from('pedido_itens').insert(linhasItens);
-      if (errItens) throw errItens;
+
+      const { data, error } = await supabase.rpc('criar_pedido', {
+        p_nome: nome.trim(),
+        p_whatsapp: whatsapp.trim(),
+        p_observacoes: observacoes.trim(),
+        p_itens: itensJson,
+      });
+
+      if (error) throw error;
+      if (!data) throw new Error('Resposta vazia do servidor');
 
       localStorage.removeItem('playdrop_carrinho');
-      setSucesso({ numero: pedido.numero, nome: nome.trim() });
+      setSucesso({ numero: data.numero, nome: nome.trim() });
       setEnviando(false);
     } catch (err) {
       setErro('Erro ao enviar pedido: ' + (err.message || 'tente novamente'));
