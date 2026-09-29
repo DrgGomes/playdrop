@@ -35,27 +35,46 @@ export default function PedidosAdminPage() {
   const [contItens, setContItens] = useState({});
   const [filtro, setFiltro] = useState('todos');
   const [verificando, setVerificando] = useState(true);
+  const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState('');
 
   useEffect(() => { iniciar(); }, []);
 
   async function iniciar() {
+    setErro('');
     const user = await getCurrentUser();
     if (!user) { router.push('/login'); return; }
     const { data: perfil } = await getProfile(user.id);
-    if (!perfil || perfil.papel !== 'admin') { router.push('/catalogo'); return; }
+    if (!perfil || perfil.papel !== 'admin') {
+      setErro('Seu usuário não está marcado como admin nesta conta. Clique em Sair e entre com a conta de administrador.');
+      setVerificando(false);
+      return;
+    }
     setVerificando(false);
     await buscar();
   }
 
   async function buscar() {
-    const { data } = await supabase.from('pedidos').select('*').order('numero', { ascending: false });
+    setCarregando(true);
+    setErro('');
+    const { data, error } = await supabase
+      .from('pedidos')
+      .select('*')
+      .order('numero', { ascending: false });
+    if (error) {
+      setErro('Erro ao buscar pedidos: ' + error.message);
+      setCarregando(false);
+      return;
+    }
     setPedidos(data || []);
 
-    const { data: its } = await supabase.from('pedido_itens').select('pedido_id');
-    const mapa = {};
-    (its || []).forEach((i) => { mapa[i.pedido_id] = (mapa[i.pedido_id] || 0) + 1; });
-    setContItens(mapa);
+    const { data: its, error: errIts } = await supabase.from('pedido_itens').select('pedido_id');
+    if (!errIts) {
+      const mapa = {};
+      (its || []).forEach((i) => { mapa[i.pedido_id] = (mapa[i.pedido_id] || 0) + 1; });
+      setContItens(mapa);
+    }
+    setCarregando(false);
   }
 
   const visiveis = filtro === 'todos' ? pedidos : pedidos.filter((p) => p.status === filtro);
@@ -95,12 +114,15 @@ export default function PedidosAdminPage() {
               <option key={k} value={k}>{v} ({contagem[k] || 0})</option>
             ))}
           </select>
+          <button className="btn btn-sm btn-outline" onClick={buscar} disabled={carregando}>
+            {carregando ? 'Buscando...' : '🔄 Atualizar'}
+          </button>
         </div>
 
-        {visiveis.length === 0 && (
+        {!carregando && !erro && visiveis.length === 0 && (
           <div className="empty">
             <h3>Nenhum pedido</h3>
-            <p>Os pedidos feitos pelos clientes aparecem aqui.</p>
+            <p>Se acabou de fazer um pedido de teste, clique em Atualizar.</p>
           </div>
         )}
 
