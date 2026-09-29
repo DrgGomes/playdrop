@@ -6,11 +6,9 @@ export default function Home() {
     <>
       <header className="nav">
         <div className="container">
-          <span className="nav-logo">PlayDrop</span>
+          <Link href="/" className="nav-logo">PlayDrop</Link>
           <nav className="nav-links">
             <Link href="/catalogo">Catálogo</Link>
-            <Link href="/login">Entrar</Link>
-            <Link href="/registre" style={{ color: '#c084fc' }}>Criar conta</Link>
           </nav>
         </div>
       </header>
