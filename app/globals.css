@@ -3,17 +3,22 @@
    ============================================ */
 
 :root {
-  --primary: #4f46e5;
-  --accent: #7c3aed;
-  --bg: #f6f7fb;
-  --surface: #ffffff;
-  --text: #171923;
-  --muted: #6b7280;
-  --border: #e5e7eb;
-  --danger: #dc2626;
-  --radius: 12px;
-  --shadow: 0 4px 16px rgba(17, 24, 39, 0.08);
-  --shadow-lg: 0 12px 32px rgba(17, 24, 39, 0.14);
+  --primary: #6D39F1;
+  --primary-2: #73F1F6;
+  --neon: #86E236;
+  --neon-text: #0b1220;
+  --accent: #73F1F6;
+  --bg: #0b0f1a;
+  --surface: #121829;
+  --surface-2: #1a2237;
+  --text: #f1f5f9;
+  --muted: #8b93a7;
+  --border: #232c42;
+  --danger: #ff4d6d;
+  --radius: 16px;
+  --shadow: 0 10px 30px rgba(0,0,0,.35);
+  --shadow-lg: 0 22px 60px rgba(0,0,0,.5);
+  --grad-main: linear-gradient(135deg, #6D39F1 0%, #3b82f6 50%, #73F1F6 100%);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -26,8 +31,8 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-a { color: var(--primary); text-decoration: none; }
-a:hover { text-decoration: underline; }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: none; }
 
 .container { max-width: 1120px; margin: 0 auto; padding: 0 20px; }
 
