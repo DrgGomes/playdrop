@@ -519,11 +519,6 @@ body:has(.menu-lateral) {
   .menu-sair { justify-content: center; padding: 12px 0; gap: 0; }
 }
 
-/* Conteúdo empurra pra direita quando o menu está presente */
-body:has(.menu-lateral) {
-  padding-left: 240px;
-}
-
 /* Mobile: menu vira trilho estreito com ícones */
 @media (max-width: 767px) {
   .menu-lateral { width: 76px; }
