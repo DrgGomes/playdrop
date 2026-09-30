@@ -99,7 +99,7 @@ export default function ProdutosAdminPage() {
               {produtos.map((p) => (
                 <tr key={p.id}>
                   <td>{imagens[p.id] ? <img className="thumb" src={imagens[p.id]} alt="" /> : <div className="thumb" />}</td>
-                  <td style={{ fontWeight: 600 }}>{p.titulo}</td>
+                  <td className="td-titulo" style={{ fontWeight: 600 }} title={p.titulo}>{p.titulo}</td>
                   <td>{p.codigo || '—'}</td>
                   <td>{p.preco_sugerido ? 'R$ ' + Number(p.preco_sugerido).toFixed(2).replace('.', ',') : '—'}</td>
                   <td>{variacoes[p.id] || 0}</td>
