@@ -166,15 +166,7 @@ export default function ProdutoDetalhePage() {
 
   return (
     <>
-      <header className="nav">
-        <div className="container">
-          <span className="nav-logo">{marca}</span>
-          <nav className="nav-links">
-            <Link href="/catalogo">Catálogo</Link>
-            <Link href="/login">Entrar</Link>
-          </nav>
-        </div>
-      </header>
+            <HeaderCliente />
 
       <div className="container pd-wrap">
         <div className="pd-crumbs">
