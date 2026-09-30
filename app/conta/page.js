@@ -109,6 +109,7 @@ export default function ContaPage() {
         <p style={{ textAlign: 'center', marginTop: 18 }}>
           <Link href="/catalogo">← Voltar ao catálogo</Link>
         </p>
+                  <HotbarCliente />
       </div>
     </>
   );
