@@ -876,3 +876,92 @@ body:has(.menu-lateral) { padding-left: 250px; }
   .menu-usuario-avatar { width: 32px; height: 32px; font-size: 14px; border-radius: 10px; }
   .menu-item.active::before { left: -14px; }
 }
+/* ===== DASHBOARD — bento grid ===== */
+.dash-bento {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.bento-card {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-radius: var(--radius);
+  padding: 20px 18px;
+  color: #fff;
+  background: var(--glass);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: transform .18s, border-color .18s, box-shadow .18s;
+}
+.bento-card:hover { transform: translateY(-3px); }
+.bento-card::after {
+  content: '';
+  position: absolute;
+  top: -40px; right: -40px;
+  width: 110px; height: 110px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.bento-grafico {
+  grid-column: 1 / -1;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  padding: 20px;
+}
+.bento-grafico-titulo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text);
+}
+.bento-grafico-titulo strong {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--green);
+  background: rgba(52, 211, 153, 0.12);
+  padding: 4px 12px;
+  border-radius: 999px;
+}
+.bento-grafico-vazio { color: var(--muted); font-size: 13px; margin: 0; }
+
+.bento-barras { display: flex; flex-direction: column; gap: 10px; }
+.bento-barra-linha {
+  display: grid;
+  grid-template-columns: 110px 1fr 28px;
+  align-items: center;
+  gap: 12px;
+}
+.bento-barra-label { font-size: 12px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bento-barra-trilho {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+}
+.bento-barra-preenchida {
+  height: 100%;
+  border-radius: 999px;
+  min-width: 4px;
+  transition: width .6s ease;
+  box-shadow: 0 0 12px currentColor;
+}
+.bento-barra-valor { font-size: 13px; font-weight: 800; color: var(--text-2); text-align: right; }
+
+@media (max-width: 640px) {
+  .dash-bento { grid-template-columns: repeat(2, 1fr); }
+  .bento-grafico { grid-column: 1 / -1; }
+  .bento-barra-linha { grid-template-columns: 90px 1fr 24px; gap: 8px; }
+  .bento-barra-label { font-size: 11px; }
+}
