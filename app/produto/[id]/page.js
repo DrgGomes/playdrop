@@ -17,6 +17,7 @@ export default function ProdutoDetalhePage() {
   const { id } = useParams();
   const router = useRouter();
   const [produto, setProduto] = useState(null);
+  const [fotos, setFotos] = useState([]);
   const [variacoes, setVariacoes] = useState([]);
   const [cores, setCores] = useState([]);
   const [tamanhos, setTamanhos] = useState([]);
@@ -31,10 +32,24 @@ export default function ProdutoDetalhePage() {
       const user = await getCurrentUser();
       if (!user) { router.push('/login'); return; }
 
-      const { data: prod } = await supabase.from('produtos').select('*').eq('id', id).single();
+      const { data: prod } = await supabase
+        .from('produtos')
+        .select('*')
+        .eq('id', id)
+        .single();
       if (!prod) { setCarregando(false); return; }
       setProduto(prod);
 
+      // FOTOS vêm da tabela produto_imagens (igual o catálogo)
+      const { data: imgs } = await supabase
+        .from('produto_imagens')
+        .select('url, ordem')
+        .eq('produto_id', id)
+        .order('ordem');
+      const listaFotos = (imgs || []).map((i) => i.url).filter(Boolean);
+      setFotos(listaFotos);
+
+      // variações
       const { data: vars } = await supabase
         .from('variacoes')
         .select('*')
@@ -75,9 +90,6 @@ export default function ProdutoDetalhePage() {
     );
   }
 
-  const fotos = Array.isArray(produto.fotos) && produto.fotos.length > 0
-    ? produto.fotos
-    : (produto.imagens ? (Array.isArray(produto.imagens) ? produto.imagens : [produto.imagens]) : []);
   const fotoAtual = fotos[fotoAtiva] || null;
 
   const variacaoAtiva = variacoes.find((v) => v.cor === corAtiva && v.tamanho === tamAtivo);
@@ -130,9 +142,22 @@ export default function ProdutoDetalhePage() {
           <div className="pd-galeria">
             <div className="pd-galeria-principal">
               {fotoAtual ? (
-                <img src={fotoAtual} alt={produto.titulo} />
+                <img
+                  src={fotoAtual}
+                  alt={produto.titulo}
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.style.display = 'none';
+                    const fb = e.currentTarget.parentElement.querySelector('.pd-fallback');
+                    if (fb) fb.style.display = 'flex';
+                  }}
+                />
               ) : (
-                <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 80 }}>👕</div>
+                <div className="pd-fallback" style={{ display: 'flex' }}>
+                  <span>👕</span>
+                  <p>{produto.titulo}</p>
+                  <small>Imagem em breve</small>
+                </div>
               )}
               <button className="pd-favorito">🤍</button>
             </div>
