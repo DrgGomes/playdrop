@@ -7,43 +7,18 @@ import { supabase } from '../../lib/supabaseClient';
 import { getCurrentUser, getProfile } from '../../lib/auth';
 import HotbarCliente from '../components/HotbarCliente';
 
-const STATUS_COR = {
-  pendente: '#f59e0b',
-  confirmado: '#3b82f6',
-  em_producao: '#8b5cf6',
-  enviado: '#06b6d4',
-  entregue: '#22c55e',
-  cancelado: '#ef4444',
-};
-
-const STATUS_LABEL = {
-  pendente: 'Pendente',
-  confirmado: 'Confirmado',
-  em_producao: 'Em produção',
-  enviado: 'Enviado',
-  entregue: 'Entregue',
-  cancelado: 'Cancelado',
+const STATUS_INFO = {
+  pendente: { label: 'Pendente', cor: '#f59e0b' },
+  confirmado: { label: 'Confirmado', cor: '#3b82f6' },
+  em_producao: { label: 'Em produção', cor: '#8b5cf6' },
+  enviado: { label: 'Enviado', cor: '#22d3ee' },
+  entregue: { label: 'Entregue', cor: '#34d399' },
+  cancelado: { label: 'Cancelado', cor: '#f43f5e' },
 };
 
 const AVISOS_PADRAO = [
-  {
-    id: 'padrao-1',
-    emoji: '🚀',
-    titulo: 'PlayDrop está de cara nova!',
-    mensagem: 'Dashboard renovado, devoluções online e menu lateral em todas as telas.',
-  },
-  {
-    id: 'padrao-2',
-    emoji: '📦',
-    titulo: 'Dica de revenda',
-    mensagem: 'Feche combos de 10+ peças para pedidos maiores e mais margem.',
-  },
-  {
-    id: 'padrao-3',
-    emoji: '🔥',
-    titulo: 'Lançamento em breve',
-    mensagem: 'Novas estampas chegando no catálogo. Fique de olho!',
-  },
+  { id: 'p1', emoji: '🚀', titulo: 'PlayDrop de cara nova!', mensagem: 'Dashboard renovado, devoluções online e menu lateral em todas as telas.' },
+  { id: 'p2', emoji: '📦', titulo: 'Dica de revenda', mensagem: 'Feche combos de 10+ peças para pedidos maiores e mais margem.' },
 ];
 
 function formatarValor(v) {
@@ -56,9 +31,7 @@ function formatarData(d) {
   if (!d) return '';
   try {
     return new Date(d).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
-  } catch {
-    return '';
-  }
+  } catch { return ''; }
 }
 
 export default function DashboardPage() {
@@ -90,9 +63,7 @@ export default function DashboardPage() {
         .eq('ativo', true)
         .order('criado_em', { ascending: false })
         .limit(4);
-      if (!errAvisos && avisosDb && avisosDb.length > 0) {
-        setAvisos(avisosDb);
-      }
+      if (!errAvisos && avisosDb && avisosDb.length > 0) setAvisos(avisosDb);
 
       setCarregando(false);
     }
@@ -101,21 +72,43 @@ export default function DashboardPage() {
 
   if (carregando) {
     return (
-      <div className="dash-loading">
-        <div className="dash-loading-spin"></div>
-        <p>Carregando seu painel...</p>
-      </div>
+      <>
+        <div className="dash-loading">
+          <div className="dash-loading-spin"></div>
+          <p>Carregando seu painel...</p>
+        </div>
+        <HotbarCliente />
+      </>
     );
   }
 
   const primeiroNome = nome.split(' ')[0] || 'cliente';
   const inicial = nome ? nome.trim()[0]?.toUpperCase() : '👤';
   const ultimos = stats?.ultimos_pedidos || [];
+  const totalPedidos = stats?.total_pedidos || 0;
+  const totalDevolucoes = stats?.total_devolucoes || 0;
   const entregues = ultimos.filter((p) => p.status === 'entregue').length;
   const emAndamento = ultimos.filter((p) => p.status !== 'entregue' && p.status !== 'cancelado').length;
   let totalGasto = 0;
   ultimos.forEach((p) => { totalGasto += Number(p.total) || 0; });
-  const taxaConclusao = ultimos.length > 0 ? Math.round((entregues / ultimos.length) * 100) : 0;
+  const taxaConclusao = totalPedidos > 0 ? Math.round((entregues / totalPedidos) * 100) : 0;
+
+  // distribuição por status (para o micro-gráfico de barras)
+  const contagemStatus = {};
+  ultimos.forEach((p) => {
+    const st = p.status || 'pendente';
+    contagemStatus[st] = (contagemStatus[st] || 0) + 1;
+  });
+  const barras = Object.entries(contagemStatus)
+    .map(([st, qtd]) => ({
+      status: st,
+      qtd,
+      pct: ultimos.length > 0 ? Math.round((qtd / ultimos.length) * 100) : 0,
+      info: STATUS_INFO[st] || { label: st, cor: '#888' },
+    }))
+    .sort((a, b) => b.qtd - a.qtd)
+    .slice(0, 4);
+
   const destaque = avisos[0] || null;
   const outrosAvisos = avisos.filter((a) => a.id !== (destaque?.id));
 
@@ -132,7 +125,6 @@ export default function DashboardPage() {
       </header>
 
       <div className="dash-wrap container">
-
         {/* HERO */}
         <section className="dash-hero">
           <div className="dash-hero-bolha hb1"></div>
@@ -141,7 +133,7 @@ export default function DashboardPage() {
           <div className="dash-hero-texto">
             <span className="dash-hello">👋 Bem-vindo de volta</span>
             <h1>Olá, <span>{primeiroNome}</span>!</h1>
-            <p>Acompanhe seus pedidos, devoluções e novidades em um só lugar.</p>
+            <p>Acompanhe pedidos, devoluções e novidades em um só lugar.</p>
             <div className="dash-hero-botoes">
               <Link href="/catalogo" className="dash-btn dash-btn-primario">🛍️ Ver catálogo</Link>
               <Link href="/devolucoes/solicitar" className="dash-btn dash-btn-fantasma">↩️ Solicitar devolução</Link>
@@ -150,7 +142,7 @@ export default function DashboardPage() {
           <div className="dash-hero-avatar">{inicial}</div>
         </section>
 
-        {/* ALERTA / NOVIDADE EM DESTAQUE */}
+        {/* DESTAQUE */}
         {destaque && (
           <section className="dash-destaque">
             <div className="dash-destaque-glow"></div>
@@ -178,42 +170,65 @@ export default function DashboardPage() {
           </section>
         )}
 
-        {/* STATS */}
-        <section className="dash-stats">
-          <div className="stat-card sc-pedidos">
+        {/* BENTO GRID: STATS + BARRAS */}
+        <section className="dash-bento">
+          <div className="bento-card sc-pedidos">
             <span className="stat-icone">📦</span>
             <div className="stat-info">
-              <span className="stat-num">{stats?.total_pedidos || 0}</span>
+              <span className="stat-num">{totalPedidos}</span>
               <span className="stat-label">Pedidos</span>
             </div>
           </div>
-          <div className="stat-card sc-entregues">
+          <div className="bento-card sc-entregues">
             <span className="stat-icone">✅</span>
             <div className="stat-info">
               <span className="stat-num">{entregues}</span>
               <span className="stat-label">Entregues</span>
             </div>
           </div>
-          <div className="stat-card sc-andamento">
+          <div className="bento-card sc-andamento">
             <span className="stat-icone">⏳</span>
             <div className="stat-info">
               <span className="stat-num">{emAndamento}</span>
               <span className="stat-label">Em andamento</span>
             </div>
           </div>
-          <div className="stat-card sc-valor">
+          <div className="bento-card sc-valor">
             <span className="stat-icone">💰</span>
             <div className="stat-info">
               <span className="stat-num">{formatarValor(totalGasto)}</span>
               <span className="stat-label">Em pedidos</span>
             </div>
           </div>
-          <div className="stat-card sc-devolucoes">
+          <div className="bento-card sc-devolucoes">
             <span className="stat-icone">↩️</span>
             <div className="stat-info">
-              <span className="stat-num">{stats?.total_devolucoes || 0}</span>
+              <span className="stat-num">{totalDevolucoes}</span>
               <span className="stat-label">Devoluções</span>
             </div>
+          </div>
+
+          {/* GRÁFICO DE BARRAS (CSS) */}
+          <div className="bento-card bento-grafico">
+            <div className="bento-grafico-titulo">
+              <span>📊 Meus pedidos</span>
+              <strong>{taxaConclusao}% concluídos</strong>
+            </div>
+            {barras.length === 0 ? (
+              <p className="bento-grafico-vazio">Sem dados ainda — faça seu primeiro pedido!</p>
+            ) : (
+              <div className="bento-barras">
+                {barras.map((b) => (
+                  <div key={b.status} className="bento-barra-linha">
+                    <span className="bento-barra-label" style={{ color: b.info.cor }}>{b.info.label}</span>
+                    <div className="bento-barra-trilho">
+                      <div className="bento-barra-preenchida" style={{ width: b.pct + '%', background: b.info.cor }}></div>
+                    </div>
+                    <span className="bento-barra-valor">{b.qtd}</span>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 
@@ -269,8 +284,7 @@ export default function DashboardPage() {
           ) : (
             <div className="dash-pedido-lista">
               {ultimos.map((p) => {
-                const cor = STATUS_COR[p.status] || '#94a3b8';
-                const label = STATUS_LABEL[p.status] || p.status;
+                const info = STATUS_INFO[p.status] || { label: p.status, cor: '#888' };
                 return (
                   <div key={p.numero} className="pedido-row">
                     <div className="pedido-row-info">
@@ -278,7 +292,7 @@ export default function DashboardPage() {
                       <span className="pedido-row-data">{formatarData(p.criado_em)}</span>
                     </div>
                     <div className="pedido-row-right">
-                      <span className="pedido-row-status" style={{ background: cor + '22', color: cor }}>{label}</span>
+                      <span className="pedido-row-status" style={{ background: info.cor + '1f', color: info.cor }}>{info.label}</span>
                       <strong className="pedido-row-total">{formatarValor(p.total)}</strong>
                     </div>
                   </div>
