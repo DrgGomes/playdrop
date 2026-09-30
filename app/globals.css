@@ -503,6 +503,22 @@ table.list th { background: #f8fafc; font-weight: 700; font-size: 12px; text-tra
 }
 .menu-sair:hover { background: rgba(239, 68, 68, .12); }
 
+body:has(.menu-lateral) {
+  padding-left: 240px;
+}
+
+@media (max-width: 767px) {
+  .menu-lateral { width: 76px; }
+  body:has(.menu-lateral) { padding-left: 76px; }
+  .menu-logo { padding: 18px 8px 14px; }
+  .menu-logo-marca { font-size: 0; }
+  .menu-logo-marca::after { content: '👕'; font-size: 22px; color: #818cf8; }
+  .menu-item { justify-content: center; padding: 12px 0; gap: 0; }
+  .menu-label { display: none; }
+  .menu-rodape { padding: 8px; }
+  .menu-sair { justify-content: center; padding: 12px 0; gap: 0; }
+}
+
 /* Conteúdo empurra pra direita quando o menu está presente */
 body:has(.menu-lateral) {
   padding-left: 240px;
