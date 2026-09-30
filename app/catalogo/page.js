@@ -103,15 +103,7 @@ export default function CatalogoPage() {
 
   return (
     <>
-      <header className="nav">
-        <div className="container">
-          <span className="nav-logo">PlayDrop</span>
-                    <nav className="nav-links">
-            <Link href="/pedido">🛒 Ver pedido</Link>
-            <Link href="/login">Entrar</Link>
-          </nav>
-        </div>
-      </header>
+            <HeaderCliente />
 
       <div className="page-header container">
         <h1>Catálogo</h1>
