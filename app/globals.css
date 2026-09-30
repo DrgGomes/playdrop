@@ -531,8 +531,7 @@ body:has(.menu-lateral) {
   .menu-rodape { padding: 8px; }
   .menu-sair { justify-content: center; padding: 12px 0; gap: 0; }
 }
-  padding-left: 0 !important; /* remove qualquer espaço lateral quebrado */
-}
+
 /* ===== DASHBOARD ===== */
 .dash-cards {
   display: grid;
