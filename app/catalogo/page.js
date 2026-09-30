@@ -169,14 +169,15 @@ export default function CatalogoPage() {
         )}
       </div>
 
-      {totalSelecionados > 0 && (
+            {totalSelecionados > 0 && (
         <div className="barra-flutuante">
           <span>{totalSelecionados} produto(s) selecionado(s)</span>
           <button className="btn btn-primary" disabled={baixando} onClick={baixarPlanilha}>
             {baixando ? 'Gerando...' : 'Baixar planilha UpSeller'}
           </button>
         </div>
-      </div>
+      )}
+
       <HotbarCliente />
     </>
   );
