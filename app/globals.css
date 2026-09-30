@@ -862,9 +862,9 @@ body:has(.menu-lateral) {
 /* ===== DASHBOARD NOVO (dark) ===== */
 .dash-page {
   min-height: 100vh;
-  background: radial-gradient(1200px 600px at 80% -10%, rgba(99,102,241,.18), transparent 60%),
-              radial-gradient(900px 500px at 10% 110%, rgba(34,211,238,.10), transparent 55%),
-              #0b1220;
+  background: radial-gradient(1200px 600px at 80% -10%, rgba(109,57,241,.25), transparent 60%),
+              radial-gradient(900px 500px at 10% 110%, rgba(115,241,246,.12), transparent 55%),
+              #0b0f1a;
   color: #e2e8f0;
 }
 
