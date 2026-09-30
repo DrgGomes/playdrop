@@ -26,7 +26,7 @@ export default function LoginPage() {
       if (perfil.data.papel === 'admin') {
         router.push('/admin');
       } else {
-        router.push('/catalogo');
+        router.push('/dashboard');
       }
     } catch (err) {
       if (err.message === 'perfil') {
