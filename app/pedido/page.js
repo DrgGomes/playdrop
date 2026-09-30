@@ -250,6 +250,8 @@ export default function PedidoPage() {
                   {enviando ? 'Enviando...' : 'Finalizar pedido'}
                 </button>
               </form>
+        </div>
+      </div>
       <HotbarCliente />
     </>
   );
