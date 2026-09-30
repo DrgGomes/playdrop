@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { supabase } from '../../lib/supabaseClient';
-import { getCurrentUser, signOut } from '../../lib/auth';
+import { getCurrentUser, getProfile, signOut } from '../../lib/auth';
 
 const ITENS = [
   { href: '/dashboard', label: 'Início', icone: '🏠' },
@@ -18,10 +18,20 @@ export default function MenuLateral() {
   const pathname = usePathname();
   const [logado, setLogado] = useState(false);
   const [qtdCarrinho, setQtdCarrinho] = useState(0);
+  const [nome, setNome] = useState('');
 
   useEffect(() => {
     let ativo = true;
-    getCurrentUser().then((user) => { if (ativo) setLogado(!!user); });
+    getCurrentUser().then(async (user) => {
+      if (!ativo) return;
+      setLogado(!!user);
+      if (user) {
+        const { data: perfil } = await getProfile(user.id);
+        const meta = user.user_metadata || {};
+        const nomeConta = (perfil?.nome || perfil?.nome_completo || meta.nome || meta.name || '').trim();
+        if (ativo) setNome(nomeConta);
+      }
+    });
     const { data: sub } = supabase.auth.onAuthStateChange((_e, sessao) => {
       if (ativo) setLogado(!!sessao?.user);
     });
@@ -46,6 +56,9 @@ export default function MenuLateral() {
 
   if (!logado) return null;
 
+  const inicial = nome ? nome.trim()[0]?.toUpperCase() : '👤';
+  const primeiroNome = nome.split(' ')[0] || 'Cliente';
+
   async function sair() {
     await signOut();
     window.location.href = '/';
@@ -58,11 +71,18 @@ export default function MenuLateral() {
       </Link>
 
       <nav className="menu-links">
-        {ITENS.map((item) => {
+        <span className="menu-secao">Navegação</span>
+        {ITENS.map((item, i) => {
           const ativo = pathname === item.href || pathname.startsWith(item.href + '/');
           const isPedido = item.href === '/pedido';
           return (
-            <Link key={item.href} href={item.href} className={`menu-item${ativo ? ' active' : ''}`} title={item.label}>
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`menu-item${ativo ? ' active' : ''}`}
+              title={item.label}
+              style={{ animationDelay: `${i * 40}ms` }}
+            >
               <span className="menu-icone">
                 {item.icone}
                 {isPedido && qtdCarrinho > 0 && (
@@ -76,6 +96,13 @@ export default function MenuLateral() {
       </nav>
 
       <div className="menu-rodape">
+        <div className="menu-usuario">
+          <span className="menu-usuario-avatar">{inicial}</span>
+          <span className="menu-usuario-info">
+            <strong>{primeiroNome}</strong>
+            <small>Cliente</small>
+          </span>
+        </div>
         <button className="menu-sair" onClick={sair}>
           <span className="menu-icone">🚪</span>
           <span className="menu-label">Sair</span>
