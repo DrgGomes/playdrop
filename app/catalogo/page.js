@@ -175,6 +175,8 @@ export default function CatalogoPage() {
           <button className="btn btn-primary" disabled={baixando} onClick={baixarPlanilha}>
             {baixando ? 'Gerando...' : 'Baixar planilha UpSeller'}
           </button>
+        </div>
+      </div>
       <HotbarCliente />
     </>
   );
