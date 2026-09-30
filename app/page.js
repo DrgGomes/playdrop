@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { supabase } from './lib/supabaseClient';
-import { getCurrentUser, signOut } from './lib/auth';
+import { supabase } from '../lib/supabaseClient';
+import { getCurrentUser, signOut } from '../lib/auth';
 import HotbarCliente from './components/HotbarCliente';
 
 export default function LandingPage() {
