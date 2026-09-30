@@ -1,5 +1,6 @@
 'use client';
 
+import HotbarCliente from '../components/HotbarCliente';
 import HeaderCliente from '../components/HeaderCliente';
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
