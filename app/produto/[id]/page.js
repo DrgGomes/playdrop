@@ -160,6 +160,7 @@ export default function ProdutoDetalhePage() {
     };
     carrinho.push(item);
     localStorage.setItem('playdrop_carrinho', JSON.stringify(carrinho));
+    window.dispatchEvent(new Event('playdrop_carrinho'));
     setMsgCarrinho('✓ Adicionado ao pedido!');
     setTimeout(() => setMsgCarrinho(''), 2500);
   }
