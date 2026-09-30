@@ -115,29 +115,60 @@ input:focus, select:focus, textarea:focus {
   display: inline-block;
   border: none;
   cursor: pointer;
-  border-radius: 10px;
-  padding: 12px 22px;
+  border-radius: 999px;
+  padding: 13px 24px;
   font-size: 15px;
-  font-weight: 700;
+  font-weight: 800;
   font-family: inherit;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+  text-decoration: none;
+  color: var(--text);
+  background: var(--surface-2);
+  transition: transform .15s, box-shadow .15s, opacity .15s, background .15s;
+  box-shadow: 0 8px 20px rgba(0,0,0,.25);
 }
-.btn:hover { transform: translateY(-1px); }
-.btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.btn:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(109,57,241,.35); text-decoration: none; }
+.btn:disabled { opacity: .6; cursor: not-allowed; transform: none; box-shadow: none; }
 
 .btn-primary {
-  background: linear-gradient(90deg, var(--primary), var(--accent));
-  color: #fff;
-  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.35);
+  background: var(--neon);
+  color: var(--neon-text);
+  box-shadow: 0 10px 26px rgba(134,226,54,.3);
 }
+.btn-primary:hover { box-shadow: 0 14px 34px rgba(134,226,54,.45); }
 
 .btn-outline {
   background: transparent;
   color: var(--text);
   border: 1.5px solid var(--border);
+  box-shadow: none;
 }
+.btn-outline:hover { border-color: var(--neon); color: var(--neon); box-shadow: none; }
 
+.btn-sm { padding: 7px 14px; font-size: 13px; border-radius: 999px; }
 .btn-block { display: block; width: 100%; }
+
+/* Nav */
+.nav {
+  background: #0b0f1a;
+  border-bottom: 1px solid var(--border);
+  color: #fff;
+  padding: 14px 0;
+}
+.nav .container { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.nav-logo {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  background: var(--grad-main);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-decoration: none;
+}
+.nav-links { display: flex; gap: 18px; align-items: center; }
+.nav-links a { color: #cbd5e1; font-size: 14px; font-weight: 600; text-decoration: none; transition: color .15s; }
+.nav-links a:hover { color: var(--neon); text-decoration: none; }
+.nav-links a.btn, .nav-links button { text-decoration: none; }
 
 /* ------ Navegação ------ */
 .nav {
