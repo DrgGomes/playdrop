@@ -26,8 +26,24 @@ const STATUS_LABEL = {
 };
 
 const AVISOS_PADRAO = [
-  { id: 'padrao-1', emoji: '🚀', titulo: 'Nova versão do PlayDrop', mensagem: 'Dashboard, devoluções e menu lateral chegaram. Tudo pensado para você revender mais.' },
-  { id: 'padrao-2', emoji: '📦', titulo: 'Dica de revenda', mensagem: 'Monte combos de 10+ peças para fechar pedidos maiores com mais margem.' },
+  {
+    id: 'padrao-1',
+    emoji: '🚀',
+    titulo: 'PlayDrop está de cara nova!',
+    mensagem: 'Dashboard renovado, devoluções online e menu lateral em todas as telas.',
+  },
+  {
+    id: 'padrao-2',
+    emoji: '📦',
+    titulo: 'Dica de revenda',
+    mensagem: 'Feche combos de 10+ peças para pedidos maiores e mais margem.',
+  },
+  {
+    id: 'padrao-3',
+    emoji: '🔥',
+    titulo: 'Lançamento em breve',
+    mensagem: 'Novas estampas chegando no catálogo. Fique de olho!',
+  },
 ];
 
 function formatarValor(v) {
@@ -96,11 +112,15 @@ export default function DashboardPage() {
   const inicial = nome ? nome.trim()[0]?.toUpperCase() : '👤';
   const ultimos = stats?.ultimos_pedidos || [];
   const entregues = ultimos.filter((p) => p.status === 'entregue').length;
+  const emAndamento = ultimos.filter((p) => p.status !== 'entregue' && p.status !== 'cancelado').length;
   let totalGasto = 0;
   ultimos.forEach((p) => { totalGasto += Number(p.total) || 0; });
+  const taxaConclusao = ultimos.length > 0 ? Math.round((entregues / ultimos.length) * 100) : 0;
+  const destaque = avisos[0] || null;
+  const outrosAvisos = avisos.filter((a) => a.id !== (destaque?.id));
 
   return (
-    <>
+    <div className="dash-page">
       <header className="nav">
         <div className="container">
           <span className="nav-logo">PlayDrop</span>
@@ -112,6 +132,7 @@ export default function DashboardPage() {
       </header>
 
       <div className="dash-wrap container">
+
         {/* HERO */}
         <section className="dash-hero">
           <div className="dash-hero-bolha hb1"></div>
@@ -119,31 +140,41 @@ export default function DashboardPage() {
           <div className="dash-hero-bolha hb3"></div>
           <div className="dash-hero-texto">
             <span className="dash-hello">👋 Bem-vindo de volta</span>
-            <h1>Olá, <span>{primeiroNome}</span>! 👊</h1>
-            <p>Que tal dar uma olhada no catálogo hoje? Tem novidade esperando você.</p>
+            <h1>Olá, <span>{primeiroNome}</span>!</h1>
+            <p>Acompanhe seus pedidos, devoluções e novidades em um só lugar.</p>
             <div className="dash-hero-botoes">
               <Link href="/catalogo" className="dash-btn dash-btn-primario">🛍️ Ver catálogo</Link>
-              <Link href="/devolucoes/solicitar" className="dash-btn dash-btn-fantasma">↩️ Pedir devolução</Link>
+              <Link href="/devolucoes/solicitar" className="dash-btn dash-btn-fantasma">↩️ Solicitar devolução</Link>
             </div>
           </div>
           <div className="dash-hero-avatar">{inicial}</div>
         </section>
 
-        {/* NOVIDADES */}
-        {avisos.length > 0 && (
-          <section className="dash-avisos">
-            <h2 className="dash-titulo">📢 Novidades</h2>
-            <div className="dash-aviso-lista">
-              {avisos.map((a) => (
-                <div key={a.id} className="dash-aviso">
-                  <span className="dash-aviso-emoji">{a.emoji || '📢'}</span>
-                  <div>
-                    <strong>{a.titulo}</strong>
-                    <p>{a.mensagem}</p>
-                  </div>
-                </div>
-              ))}
+        {/* ALERTA / NOVIDADE EM DESTAQUE */}
+        {destaque && (
+          <section className="dash-destaque">
+            <div className="dash-destaque-glow"></div>
+            <span className="dash-destaque-emoji">{destaque.emoji || '📢'}</span>
+            <div className="dash-destaque-conteudo">
+              <span className="dash-destaque-badge">📢 Novidade</span>
+              <h2>{destaque.titulo}</h2>
+              <p>{destaque.mensagem}</p>
             </div>
+          </section>
+        )}
+
+        {/* OUTROS AVISOS */}
+        {outrosAvisos.length > 0 && (
+          <section className="dash-avisos">
+            {outrosAvisos.map((a) => (
+              <div key={a.id} className="dash-aviso">
+                <span className="dash-aviso-emoji">{a.emoji || '📢'}</span>
+                <div>
+                  <strong>{a.titulo}</strong>
+                  <p>{a.mensagem}</p>
+                </div>
+              </div>
+            ))}
           </section>
         )}
 
@@ -151,31 +182,49 @@ export default function DashboardPage() {
         <section className="dash-stats">
           <div className="stat-card sc-pedidos">
             <span className="stat-icone">📦</span>
-            <div>
+            <div className="stat-info">
               <span className="stat-num">{stats?.total_pedidos || 0}</span>
               <span className="stat-label">Pedidos</span>
             </div>
           </div>
           <div className="stat-card sc-entregues">
             <span className="stat-icone">✅</span>
-            <div>
+            <div className="stat-info">
               <span className="stat-num">{entregues}</span>
               <span className="stat-label">Entregues</span>
             </div>
           </div>
+          <div className="stat-card sc-andamento">
+            <span className="stat-icone">⏳</span>
+            <div className="stat-info">
+              <span className="stat-num">{emAndamento}</span>
+              <span className="stat-label">Em andamento</span>
+            </div>
+          </div>
           <div className="stat-card sc-valor">
             <span className="stat-icone">💰</span>
-            <div>
+            <div className="stat-info">
               <span className="stat-num">{formatarValor(totalGasto)}</span>
               <span className="stat-label">Em pedidos</span>
             </div>
           </div>
           <div className="stat-card sc-devolucoes">
             <span className="stat-icone">↩️</span>
-            <div>
+            <div className="stat-info">
               <span className="stat-num">{stats?.total_devolucoes || 0}</span>
               <span className="stat-label">Devoluções</span>
             </div>
+          </div>
+        </section>
+
+        {/* PROGRESSO */}
+        <section className="dash-progresso">
+          <div className="dash-progresso-info">
+            <span>Pedidos concluídos</span>
+            <strong>{taxaConclusao}%</strong>
+          </div>
+          <div className="dash-progresso-barra">
+            <div className="dash-progresso-preenchido" style={{ width: taxaConclusao + '%' }}></div>
           </div>
         </section>
 
@@ -214,13 +263,13 @@ export default function DashboardPage() {
             <div className="dash-vazio">
               <span className="dash-vazio-emoji">🛍️</span>
               <h3>Nenhum pedido ainda</h3>
-              <p>Bora dar uma olhada no catálogo e fazer seu primeiro pedido?</p>
+              <p>Bora fazer seu primeiro pedido? É rapidinho!</p>
               <Link href="/catalogo" className="dash-btn dash-btn-primario">Ver catálogo</Link>
             </div>
           ) : (
             <div className="dash-pedido-lista">
               {ultimos.map((p) => {
-                const cor = STATUS_COR[p.status] || '#999';
+                const cor = STATUS_COR[p.status] || '#94a3b8';
                 const label = STATUS_LABEL[p.status] || p.status;
                 return (
                   <div key={p.numero} className="pedido-row">
@@ -229,9 +278,7 @@ export default function DashboardPage() {
                       <span className="pedido-row-data">{formatarData(p.criado_em)}</span>
                     </div>
                     <div className="pedido-row-right">
-                      <span className="pedido-row-status" style={{ background: cor + '1f', color: cor }}>
-                        {label}
-                      </span>
+                      <span className="pedido-row-status" style={{ background: cor + '22', color: cor }}>{label}</span>
                       <strong className="pedido-row-total">{formatarValor(p.total)}</strong>
                     </div>
                   </div>
@@ -243,6 +290,6 @@ export default function DashboardPage() {
       </div>
 
       <HotbarCliente />
-    </>
+    </div>
   );
 }
