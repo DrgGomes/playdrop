@@ -1295,3 +1295,28 @@ table.list .thumb {
   background: #dc2626 !important;
   transform: scale(1.15);
 }
+/* ===== CAIXAS DE TEXTO — PADRÃO DARK GLASS ===== */
+input[type="text"], input[type="email"], input[type="password"],
+input[type="number"], input[type="tel"], input[type="date"], textarea, select {
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: 12px !important;
+  color: #f4f4f5 !important;
+  padding: 12px 15px !important;
+  font-size: 14px !important;
+  transition: border-color .15s, box-shadow .15s, background .15s;
+}
+input::placeholder, textarea::placeholder {
+  color: #6b7280 !important;
+  opacity: 1;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: rgba(139, 92, 246, 0.7) !important;
+  background: rgba(0, 0, 0, 0.45) !important;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.18), 0 0 26px rgba(139, 92, 246, 0.15) !important;
+  outline: none;
+}
+select option {
+  background: #14141c !important;
+  color: #f4f4f5 !important;
+}
