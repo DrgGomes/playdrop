@@ -249,9 +249,12 @@ export default function PedidoPage() {
                 <button className="btn btn-primary btn-block" style={{ fontSize: 16, padding: '14px' }} disabled={enviando}>
                   {enviando ? 'Enviando...' : 'Finalizar pedido'}
                 </button>
-              </form>
-        </div>
+                            </form>
+            </div>
+          </div>
+        )}
       </div>
+
       <HotbarCliente />
     </>
   );
