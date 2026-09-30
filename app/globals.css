@@ -1243,3 +1243,21 @@ body:has(.menu-lateral) { padding-left: 250px; }
   .landing-hero-botoes { justify-content: center; }
   .landing-capa { max-width: 300px; }
 }
+/* ===== CORREÇÃO: tabela admin produtos ===== */
+table.list th { white-space: nowrap; }
+table.list td { vertical-align: middle; }
+
+.td-titulo {
+  max-width: 300px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+table.list .thumb {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.05);
+}
