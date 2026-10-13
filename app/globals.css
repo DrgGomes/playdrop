@@ -2145,3 +2145,211 @@ select option { background: #0f141b !important; color: #f2f4f8 !important; }
 .loj-btn-copiar { color: #c3cbd8 !important; border-color: rgba(255, 255, 255, 0.16) !important; }
 .loj-btn-copiar:hover { border-color: #22d3ee !important; color: #7dd3fc !important; }
 .loj-btn-copiar.copiado { background: rgba(34, 211, 238, 0.14) !important; color: #7dd3fc !important; border-color: rgba(34, 211, 238, 0.45) !important; }
+/* ============================================================
+   ETAPA 1 — DESIGN SYSTEM KORVO
+   Ciano #00E5FF · Preto #0A0A0A · Branco #FFFFFF · Montserrat
+   Visual final = mockup KORVO (menu escuro + conteúdo claro)
+   ============================================================ */
+:root {
+  --bg: #f4f6fa;
+  --bg-2: #ffffff;
+  --bg-3: #ffffff;
+  --glass: rgba(10, 10, 10, 0.04);
+  --glass-2: rgba(10, 10, 10, 0.06);
+  --glass-3: rgba(255, 255, 255, 0.95);
+  --border: rgba(10, 10, 10, 0.10);
+  --border-strong: rgba(10, 10, 10, 0.18);
+  --preto: #0a0a0a;
+  --ciano: #00e5ff;
+  --ciano-escuro: #0096b4;
+  --ciano-suave: rgba(0, 229, 255, 0.12);
+  --purple: #00b8d4;
+  --purple-deep: #0096b4;
+  --cyan: #00e5ff;
+  --blue: #00b8d4;
+  --green: #00e5ff;
+  --amber: #f59e0b;
+  --pink: #ec4899;
+  --red: #ef4444;
+  --text: #111827;
+  --text-2: #374151;
+  --muted: #6b7280;
+}
+
+* { font-family: 'Montserrat', system-ui, -apple-system, sans-serif !important; }
+
+body {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+/* ===== MENU LATERAL — PRETO KORVO + CIANO ===== */
+.menu-lateral {
+  background: #0a0a0a !important;
+  border-right: 1px solid rgba(0, 229, 255, 0.16) !important;
+  box-shadow: 12px 0 50px rgba(0, 0, 0, 0.45) !important;
+}
+.menu-lateral .menu-logo-marca {
+  background: linear-gradient(135deg, #00e5ff, #00b8d4) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
+  letter-spacing: .02em !important;
+}
+.menu-lateral .menu-item { color: #9ca3af !important; font-weight: 600 !important; }
+.menu-lateral .menu-item:hover {
+  background: rgba(0, 229, 255, 0.10) !important;
+  color: #ffffff !important;
+}
+.menu-lateral .menu-item.active {
+  background: linear-gradient(135deg, rgba(0, 229, 255, 0.22), rgba(0, 184, 212, 0.10)) !important;
+  color: #00e5ff !important;
+  box-shadow: inset 0 0 0 1px rgba(0, 229, 255, 0.35), 0 8px 26px rgba(0, 229, 255, 0.18) !important;
+}
+.menu-lateral .menu-item.active::before {
+  background: linear-gradient(180deg, #00e5ff, #00b8d4) !important;
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.9) !important;
+}
+.menu-lateral .menu-secao { color: #00b8d4 !important; }
+.menu-lateral .menu-usuario { background: rgba(255, 255, 255, 0.05) !important; border-color: rgba(255, 255, 255, 0.08) !important; }
+.menu-lateral .menu-usuario-avatar {
+  background: linear-gradient(135deg, #00e5ff, #00b8d4) !important;
+  color: #0a0a0a !important;
+  font-weight: 900 !important;
+  box-shadow: 0 6px 18px rgba(0, 229, 255, 0.35) !important;
+}
+.menu-lateral .menu-usuario-info strong { color: #ffffff !important; }
+.menu-lateral .menu-usuario-info small { color: #67e8f9 !important; }
+.menu-lateral .menu-sair { color: #fda4af !important; }
+.menu-badge {
+  background: linear-gradient(135deg, #00e5ff, #00b8d4) !important;
+  color: #0a0a0a !important;
+}
+
+/* ===== CARDS — BRANCOS, SOMBRA SUAVE (padrão mockup) ===== */
+.auth-card, .dash-card, .dash-bento, .pd-info-card, .dev-card,
+.card, .loj-card, .cat-card, .pedido-card, .conta-card,
+.bento-card, .acao-card, .dash-pedido-lista, .dash-item,
+.product-info, .ped-item, .ped-resumo {
+  background: #ffffff !important;
+  border: 1px solid rgba(10, 10, 10, 0.08) !important;
+  box-shadow: 0 1px 2px rgba(10, 10, 10, 0.04), 0 8px 24px rgba(10, 10, 10, 0.06) !important;
+  border-radius: 16px !important;
+}
+
+/* ===== HERO DASHBOARD — BRANCO (mockup) ===== */
+.dash-hero {
+  background: #ffffff !important;
+  border: 1px solid rgba(10, 10, 10, 0.08) !important;
+  box-shadow: 0 8px 24px rgba(10, 10, 10, 0.06) !important;
+}
+.dash-hello { color: #00b8d4 !important; font-weight: 800 !important; }
+.dash-hero h1 { color: #111827 !important; }
+.dash-hero p { color: #6b7280 !important; }
+.dash-hero-avatar {
+  background: linear-gradient(135deg, #00e5ff, #00b8d4) !important;
+  color: #0a0a0a !important;
+  font-weight: 900 !important;
+  box-shadow: 0 8px 22px rgba(0, 229, 255, 0.30) !important;
+}
+
+/* ===== BOTÕES — CIANO KORVO ===== */
+.btn-primary, .dash-btn-primario {
+  background: linear-gradient(135deg, #00e5ff, #00b8d4) !important;
+  border: none !important;
+  color: #0a0a0a !important;
+  font-weight: 800 !important;
+  box-shadow: 0 10px 26px rgba(0, 229, 255, 0.30) !important;
+}
+.btn-primary:hover, .dash-btn-primario:hover {
+  background: linear-gradient(135deg, #33eaff, #00e5ff) !important;
+  color: #0a0a0a !important;
+  transform: translateY(-1px) !important;
+}
+.dash-btn-fantasma, .btn-outline {
+  background: #ffffff !important;
+  color: #111827 !important;
+  border: 1px solid rgba(10, 10, 10, 0.16) !important;
+}
+
+/* ===== TEXTOS E MÉTRICAS ===== */
+.stat-num { color: #111827 !important; font-weight: 800 !important; }
+.stat-label { color: #6b7280 !important; }
+.stat-icone { color: #00b8d4 !important; }
+.sc-pedidos { border-left: 3px solid #00e5ff !important; }
+.dash-progresso { background: rgba(10, 10, 10, 0.08) !important; }
+.dash-progresso-preenchido {
+  background: linear-gradient(90deg, #00e5ff, #00b8d4) !important;
+  box-shadow: 0 0 14px rgba(0, 229, 255, 0.5) !important;
+}
+.acao-nome { color: #111827 !important; font-weight: 700 !important; }
+.acao-desc { color: #6b7280 !important; }
+.dash-item strong { color: #111827 !important; }
+.dash-data { color: #6b7280 !important; }
+.pedido-row-total { color: #00b8d4 !important; font-weight: 800 !important; }
+
+/* ===== HEADER SUPERIOR — BRANCO ===== */
+.nav { background: #ffffff !important; border-bottom: 1px solid rgba(10, 10, 10, 0.08) !important; }
+.nav-logo { color: #0a0a0a !important; font-weight: 900 !important; }
+.nav-links a { color: #4b5563 !important; font-weight: 600 !important; }
+.nav-links a:hover { color: #00b8d4 !important; }
+
+/* ===== CAIXAS DE TEXTO — BRANCAS ===== */
+input[type="text"], input[type="email"], input[type="password"],
+input[type="number"], input[type="tel"], input[type="date"], textarea, select {
+  background: #ffffff !important;
+  border: 1px solid rgba(10, 10, 10, 0.14) !important;
+  color: #111827 !important;
+  border-radius: 12px !important;
+  padding: 12px 15px !important;
+  font-size: 14px !important;
+  box-shadow: 0 1px 2px rgba(10, 10, 10, 0.04) !important;
+}
+input::placeholder, textarea::placeholder { color: #9ca3af !important; }
+input:focus, textarea:focus, select:focus {
+  border-color: #00e5ff !important;
+  box-shadow: 0 0 0 3px rgba(0, 229, 255, 0.18) !important;
+  outline: none;
+}
+select option { background: #ffffff !important; color: #111827 !important; }
+
+/* ===== PÁGINA DO PRODUTO — PREÇOS ===== */
+.pd-title { color: #111827 !important; }
+.pd-categoria { color: #00b8d4 !important; font-weight: 800 !important; }
+.pd-custo { background: rgba(239, 68, 68, 0.06) !important; border-color: rgba(239, 68, 68, 0.20) !important; }
+.pd-custo-label { color: #ef4444 !important; }
+.pd-custo-valor { color: #ef4444 !important; }
+.pd-venda-sugerida { background: rgba(0, 229, 255, 0.08) !important; border-color: rgba(0, 229, 255, 0.40) !important; }
+.pd-venda-sugerida-label { color: #0096b4 !important; }
+.pd-venda-sugerida-valor { color: #00b8d4 !important; }
+.pd-chip-chamativo { color: #0096b4 !important; background: rgba(0, 229, 255, 0.10) !important; border-color: rgba(0, 229, 255, 0.35) !important; }
+.pd-galeria-principal { background: #ffffff !important; border: 1px solid rgba(10, 10, 10, 0.08) !important; }
+.pd-thumb { background: #ffffff !important; border-color: rgba(10, 10, 10, 0.10) !important; }
+.pd-thumb.ativo { border-color: #00e5ff !important; box-shadow: 0 0 0 2px rgba(0, 229, 255, 0.35) !important; }
+.pd-cor, .pd-tam { background: #f9fafb !important; color: #374151 !important; border-color: rgba(10, 10, 10, 0.12) !important; }
+.pd-cor.ativo, .pd-tam.ativo { background: linear-gradient(135deg, #00e5ff, #00b8d4) !important; color: #0a0a0a !important; font-weight: 800 !important; }
+.pd-baixar-fotos { background: rgba(0, 229, 255, 0.10) !important; border: 1px solid rgba(0, 229, 255, 0.40) !important; color: #0096b4 !important; font-weight: 700 !important; }
+
+/* ===== TÍTULOS/DESCRIÇÕES DO ANÚNCIO ===== */
+.loj-card-topo h3 { color: #111827 !important; }
+.loj-sub { color: #6b7280 !important; }
+.loj-titulo-opcao { background: #f9fafb !important; border-color: rgba(10, 10, 10, 0.08) !important; }
+.loj-titulo-opcao p { color: #374151 !important; }
+.loj-desc-texto { background: #f9fafb !important; border-color: rgba(10, 10, 10, 0.08) !important; color: #374151 !important; }
+.loj-btn-copiar { color: #374151 !important; border-color: rgba(10, 10, 10, 0.16) !important; }
+.loj-btn-copiar:hover { border-color: #00e5ff !important; color: #0096b4 !important; }
+.loj-btn-copiar.copiado { background: rgba(0, 229, 255, 0.12) !important; color: #0096b4 !important; border-color: rgba(0, 229, 255, 0.40) !important; }
+
+/* ===== PÁGINAS GENÉRICAS ===== */
+.page-header h1 { color: #111827 !important; font-weight: 800 !important; }
+.page-header p { color: #6b7280 !important; }
+.empty h3 { color: #111827 !important; }
+.empty p { color: #6b7280 !important; }
+.erro { color: #ef4444 !important; }
+.muted { color: #6b7280 !important; }
+.barra-flutuante {
+  background: #ffffff !important;
+  border: 1px solid rgba(10, 10, 10, 0.10) !important;
+  box-shadow: 0 16px 44px rgba(10, 10, 10, 0.14) !important;
+  color: #111827 !important;
+}
