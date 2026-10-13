@@ -7,29 +7,12 @@ import { supabase } from '../../../lib/supabaseClient';
 import { getCurrentUser } from '../../../lib/auth';
 import HotbarCliente from '../../components/HotbarCliente';
 
-<div className="pd-custo">
-  <span className="pd-custo-label">Seu custo final (embalado + etiquetado + envio)</span>
-  <span className="pd-custo-valor">{formatarValor(produto.preco_sugerido)}</span>
-</div>
-
-{(() => {
-  const custo = Number(produto.preco_sugerido) || 0;
-  if (custo <= 0) return null;
-  const pMin = (custo + FRETE_FIXO + LUCRO_MINIMO) / (1 - TAXA_MARKETPLACE);
-  const pMax = (custo + FRETE_FIXO + custo * LUCRO_MAXIMO_PCT) / (1 - TAXA_MARKETPLACE);
-  return (
-    <div className="pd-venda-sugerida">
-      <span className="pd-venda-sugerida-label">💡 PREÇO DE VENDA SUGERIDO</span>
-      <span className="pd-venda-sugerida-valor">
-        {formatarValor(pMin)} <span className="pd-venda-sep">a</span> {formatarValor(pMax)}
-      </span>
-      <span className="pd-venda-sugerida-hint">
-        Calculado com ~20% de taxas do marketplace + R$ 5,00 de frete e lucro a partir de R$ 8,00 por peça.
-      </span>
-    </div>
-  );
-})()}
+function formatarValor(v) {
+  const n = Number(v);
+  if (isNaN(n)) return 'R$ 0,00';
+  return 'R$ ' + n.toFixed(2).replace('.', ',');
 }
+
 /* ===== Cálculo do preço de venda sugerido ===== */
 const TAXA_MARKETPLACE = 0.20; // ~20% de taxas/comissão sobre o preço de venda
 const FRETE_FIXO = 5;          // R$ 5,00 de frete fixo
@@ -217,6 +200,10 @@ export default function ProdutoDetalhePage() {
     router.push('/pedido');
   }
 
+  const custo = Number(produto.preco_sugerido) || 0;
+  const precoMin = (custo + FRETE_FIXO + LUCRO_MINIMO) / (1 - TAXA_MARKETPLACE);
+  const precoMax = (custo + FRETE_FIXO + custo * LUCRO_MAXIMO_PCT) / (1 - TAXA_MARKETPLACE);
+
   return (
     <>
       <header className="nav">
@@ -278,10 +265,22 @@ export default function ProdutoDetalhePage() {
             <span className="pd-categoria">{produto.categoria || 'Camisetas'}</span>
             <h1 className="pd-title">{produto.titulo}</h1>
 
-            <div className="pd-preco">
-              <span className="pd-preco-atual">{formatarValor(produto.preco_sugerido)}</span>
-              <span className="pd-preco-hint"> · preço sugerido para revenda</span>
+            <div className="pd-custo">
+              <span className="pd-custo-label">Seu custo final (embalado + etiquetado + envio)</span>
+              <span className="pd-custo-valor">{formatarValor(custo)}</span>
             </div>
+
+            {custo > 0 && (
+              <div className="pd-venda-sugerida">
+                <span className="pd-venda-sugerida-label">💡 PREÇO DE VENDA SUGERIDO</span>
+                <span className="pd-venda-sugerida-valor">
+                  {formatarValor(precoMin)} <span className="pd-venda-sep">a</span> {formatarValor(precoMax)}
+                </span>
+                <span className="pd-venda-sugerida-hint">
+                  Calculado com ~20% de taxas do marketplace + R$ 5,00 de frete e lucro a partir de R$ 8,00 por peça.
+                </span>
+              </div>
+            )}
 
             <div className="pd-block">
               <span className="pd-block-titulo">Cor</span>
