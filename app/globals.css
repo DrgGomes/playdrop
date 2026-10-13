@@ -1527,3 +1527,26 @@ select option {
   border-color: var(--purple);
   box-shadow: 0 10px 30px rgba(139, 92, 246, 0.22);
 }
+/* ===== BOTÃO BAIXAR TODAS AS FOTOS ===== */
+.pd-baixar-fotos {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 12px;
+  padding: 13px 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(139, 92, 246, 0.45);
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.18), rgba(34, 211, 238, 0.1));
+  color: #e9d5ff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform .15s, box-shadow .2s, border-color .2s;
+}
+.pd-baixar-fotos:hover {
+  transform: translateY(-2px);
+  border-color: var(--purple);
+  box-shadow: 0 10px 30px rgba(139, 92, 246, 0.22);
+}
