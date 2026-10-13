@@ -13,6 +13,49 @@ function formatarValor(v) {
   return 'R$ ' + n.toFixed(2).replace('.', ',');
 }
 
+/* ===== Gerador de títulos estilo Mercado Livre ===== */
+function limparBase(t) {
+  return (t || '')
+    .replace(/camiseta|camisa|blusa/gi, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function gerarTitulos(produto) {
+  const base = (produto.titulo || '').trim();
+  const apelido = (produto.apelido || '').trim();
+  const principal = apelido || base;
+  const limpo = limparBase(principal);
+  const semMarca2 = limparBase(base);
+
+  const opcoes = [
+    principal,
+    `Camiseta ${limpo} Masculina Manga Curta`,
+    `Camiseta ${limpo} - 100% Algodao, Tamanhos do P ao GG`,
+    `Camisa ${semMarca2 || limpo} Premium para Revenda`,
+    `Camiseta ${semMarca2 || limpo} Atacado e Revenda | Envio Imediato`,
+  ].filter(Boolean);
+
+  return [...new Set(opcoes)].slice(0, 5);
+}
+
+/* ===== Descrição padrão estilo Mercado Livre (sem emojis) ===== */
+function gerarDescricao(produto) {
+  const titulo = (produto.titulo || '').trim();
+  const categoria = (produto.categoria || 'Camiseta');
+  return [
+    `${titulo} - ${categoria} de alta qualidade, confeccionada em malha 100% algodao, garantindo conforto, durabilidade e caimento perfeito para o dia a dia.`,
+    '',
+    'Caracteristicas:',
+    '- Tecido macio e resistente, ideal para uso diario;',
+    '- Modelagem confortavel com manga curta;',
+    '- Tamanhos disponiveis do P ao GG;',
+    '- Otima opcao para revenda, com excelente margem de lucro.',
+    '',
+    'Aproveite e garanta a sua!',
+  ].join('\n');
+}
+
 export default function ProdutoDetalhePage() {
   const { id } = useParams();
   const router = useRouter();
@@ -25,6 +68,7 @@ export default function ProdutoDetalhePage() {
   const [tamAtivo, setTamAtivo] = useState('');
   const [qtd, setQtd] = useState(1);
   const [fotoAtiva, setFotoAtiva] = useState(0);
+  const [copiado, setCopiado] = useState('');
   const [carregando, setCarregando] = useState(true);
 
   useEffect(() => {
@@ -40,16 +84,20 @@ export default function ProdutoDetalhePage() {
       if (!prod) { setCarregando(false); return; }
       setProduto(prod);
 
-      // FOTOS vêm da tabela produto_imagens (igual o catálogo)
+      // FOTOS: tabela produto_imagens (padrão), com fallback para fotos/imagens direto no produto
       const { data: imgs } = await supabase
         .from('produto_imagens')
         .select('url, ordem')
         .eq('produto_id', id)
         .order('ordem');
-      const listaFotos = (imgs || []).map((i) => i.url).filter(Boolean);
+      let listaFotos = (imgs || []).map((i) => i.url).filter(Boolean);
+      if (listaFotos.length === 0) {
+        const diretas = Array.isArray(prod.fotos) ? prod.fotos : (Array.isArray(prod.imagens) ? prod.imagens : []);
+        listaFotos = diretas.filter(Boolean);
+      }
       setFotos(listaFotos);
 
-      // variações
+      // VARIAÇÕES
       const { data: vars } = await supabase
         .from('variacoes')
         .select('*')
@@ -96,6 +144,32 @@ export default function ProdutoDetalhePage() {
   const estoque = variacaoAtiva?.estoque ?? 0;
   const esgotado = estoque <= 0;
   const sku = variacaoAtiva?.sku || produto.sku || '';
+
+  // TÍTULOS e DESCRIÇÃO para anúncio (do ADM se existir, senão gerado)
+  const titulos = Array.isArray(produto.titulos) && produto.titulos.length >= 5
+    ? produto.titulos
+    : gerarTitulos(produto);
+  const descricao = (produto.descricao && produto.descricao.trim())
+    ? produto.descricao
+    : gerarDescricao(produto);
+
+  function copiarTexto(texto, chave) {
+    const concluir = () => {
+      setCopiado(chave);
+      setTimeout(() => setCopiado(''), 1800);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(texto).then(concluir).catch(() => {});
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = texto;
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      concluir();
+    }
+  }
 
   function adicionar() {
     if (esgotado) return;
@@ -236,6 +310,42 @@ export default function ProdutoDetalhePage() {
               {esgotado ? 'Esgotado' : '🛒 Adicionar ao pedido'}
             </button>
             {esgotado && <p className="erro" style={{ marginTop: 10 }}>Este tamanho/cor está esgotado.</p>}
+          </div>
+        </div>
+
+        {/* ===== TÍTULOS + DESCRIÇÃO PARA ANÚNCIO (estilo Mercado Livre) ===== */}
+        <div className="loj-grid-2">
+          <div className="loj-card">
+            <div className="loj-card-topo">
+              <h3>Títulos para o anúncio</h3>
+              <span className="chip">5 opções</span>
+            </div>
+            <div className="loj-sub">Copie e cole no título do seu anúncio.</div>
+            {titulos.map((t, i) => (
+              <div key={i} className="loj-titulo-opcao">
+                <p>{t}</p>
+                <button
+                  className={`loj-btn-copiar${copiado === 't' + i ? ' copiado' : ''}`}
+                  onClick={() => copiarTexto(t, 't' + i)}
+                >
+                  {copiado === 't' + i ? 'Copiado!' : 'Copiar'}
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <div className="loj-card">
+            <div className="loj-card-topo">
+              <h3>Descrição para o anúncio</h3>
+              <button
+                className={`loj-btn-copiar${copiado === 'desc' ? ' copiado' : ''}`}
+                onClick={() => copiarTexto(descricao, 'desc')}
+              >
+                {copiado === 'desc' ? 'Descrição copiada!' : 'Copiar descrição'}
+              </button>
+            </div>
+            <div className="loj-sub">Sem emojis, pronto para colar no Mercado Livre.</div>
+            <div className="loj-desc-texto">{descricao}</div>
           </div>
         </div>
       </div>
