@@ -1497,6 +1497,7 @@ select option {
 }
 .pd-venda-sugerida-valor {
   font-size: 26px;
+}
 .pd-chamativos-label { font-size: 11px; color: var(--muted); font-weight: 600; }
 .pd-chip-chamativo {
   font-size: 13px;
