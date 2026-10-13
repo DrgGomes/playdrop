@@ -16,8 +16,19 @@ function formatarValor(v) {
 /* ===== Cálculo do preço de venda sugerido ===== */
 const TAXA_MARKETPLACE = 0.20; // ~20% de taxas/comissão sobre o preço de venda
 const FRETE_FIXO = 5;          // R$ 5,00 de frete fixo
-const LUCRO_MINIMO = 8;        // lucro mínimo de R$ 8,00 por peça
-const LUCRO_MAXIMO_PCT = 0.60; // teto: 60% do custo como lucro sugerido (ajuste aqui)
+const LUCRO_MINIMO = 5;        // lucro mínimo de R$ 5,00 por peça
+const LUCRO_MAXIMO = 10;       // lucro máximo de R$ 10,00 por peça
+
+/* ===== Preços chamativos (terminados em ,90) dentro da faixa ===== */
+function gerarChamativos(min, max) {
+  const lista = [];
+  let v = Math.ceil(min) - 0.1;
+  while (v <= max + 0.001 && lista.length < 3) {
+    if (v >= min - 0.001) lista.push(v);
+    v += 1;
+  }
+  return lista;
+}
 
 /* ===== Gerador de títulos estilo Mercado Livre ===== */
 function limparBase(t) {
@@ -90,7 +101,6 @@ export default function ProdutoDetalhePage() {
       if (!prod) { setCarregando(false); return; }
       setProduto(prod);
 
-      // FOTOS: tabela produto_imagens (padrão), com fallback para fotos/imagens direto no produto
       const { data: imgs } = await supabase
         .from('produto_imagens')
         .select('url, ordem')
@@ -103,7 +113,6 @@ export default function ProdutoDetalhePage() {
       }
       setFotos(listaFotos);
 
-      // VARIAÇÕES
       const { data: vars } = await supabase
         .from('variacoes')
         .select('*')
@@ -151,7 +160,6 @@ export default function ProdutoDetalhePage() {
   const esgotado = estoque <= 0;
   const sku = variacaoAtiva?.sku || produto.sku || '';
 
-  // TÍTULOS e DESCRIÇÃO para anúncio (do ADM se existir, senão gerado)
   const titulos = Array.isArray(produto.titulos) && produto.titulos.length >= 5
     ? produto.titulos
     : gerarTitulos(produto);
@@ -230,8 +238,9 @@ export default function ProdutoDetalhePage() {
   }
 
   const custo = Number(produto.preco_sugerido) || 0;
-  const precoMin = (custo + FRETE_FIXO + LUCRO_MINIMO) / (1 - TAXA_MARKETPLACE);
-  const precoMax = (custo + FRETE_FIXO + custo * LUCRO_MAXIMO_PCT) / (1 - TAXA_MARKETPLACE);
+  const precoMin = custo > 0 ? (custo + FRETE_FIXO + LUCRO_MINIMO) / (1 - TAXA_MARKETPLACE) : 0;
+  const precoMax = custo > 0 ? (custo + FRETE_FIXO + LUCRO_MAXIMO) / (1 - TAXA_MARKETPLACE) : 0;
+  const chamativos = custo > 0 ? gerarChamativos(precoMin, precoMax) : [];
 
   return (
     <>
@@ -288,7 +297,6 @@ export default function ProdutoDetalhePage() {
               </div>
             )}
 
-            {/* BOTÃO BAIXAR TODAS AS FOTOS */}
             {fotos.length > 0 && (
               <button className="pd-baixar-fotos" onClick={baixarTodasFotos}>
                 ⬇️ Baixar todas as fotos ({fotos.length})
@@ -312,8 +320,16 @@ export default function ProdutoDetalhePage() {
                 <span className="pd-venda-sugerida-valor">
                   {formatarValor(precoMin)} <span className="pd-venda-sep">a</span> {formatarValor(precoMax)}
                 </span>
+                {chamativos.length > 0 && (
+                  <div className="pd-chamativos">
+                    <span className="pd-chamativos-label">Ideais para vender:</span>
+                    {chamativos.map((c) => (
+                      <span key={c} className="pd-chip-chamativo">{formatarValor(c)}</span>
+                    ))}
+                  </div>
+                )}
                 <span className="pd-venda-sugerida-hint">
-                  Calculado com ~20% de taxas do marketplace + R$ 5,00 de frete e lucro a partir de R$ 8,00 por peça.
+                  Lucro de R$ 5,00 a R$ 10,00 por peça (após ~20% de taxas do marketplace e R$ 5,00 de frete). Preços terminados em ,90 vendem mais rápido.
                 </span>
               </div>
             )}
@@ -371,7 +387,7 @@ export default function ProdutoDetalhePage() {
           </div>
         </div>
 
-        {/* ===== TÍTULOS + DESCRIÇÃO PARA ANÚNCIO (estilo Mercado Livre) ===== */}
+        {/* ===== TÍTULOS + DESCRIÇÃO PARA ANÚNCIO ===== */}
         <div className="loj-grid-2">
           <div className="loj-card">
             <div className="loj-card-topo">
