@@ -1445,3 +1445,62 @@ select option {
   margin-top: 4px;
   line-height: 1.4;
 }
+/* ===== CUSTO + PREÇO DE VENDA SUGERIDO (psicologia das cores) ===== */
+/* CUSTO = vermelho/âmbar (despesa, dinheiro saindo) */
+.pd-custo {
+  margin-bottom: 8px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+.pd-custo-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: #f87171;
+  margin-bottom: 2px;
+}
+.pd-custo-valor {
+  font-size: 22px;
+  font-weight: 800;
+  color: #f87171;
+}
+
+/* VENDA SUGERIDA = verde (lucro), mas reduzido e claramente sugestão */
+.pd-venda-sugerida {
+  margin: 10px 0 22px;
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: rgba(52, 211, 153, 0.08);
+  border: 1px dashed rgba(52, 211, 153, 0.35);
+}
+.pd-venda-sugerida-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #6ee7b7;
+  margin-bottom: 2px;
+}
+.pd-venda-sugerida-valor {
+  font-size: 17px;   /* REDUZIDO */
+  font-weight: 700;
+  color: #6ee7b7;
+}
+.pd-venda-sep {
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+  margin: 0 5px;
+}
+.pd-venda-sugerida-hint {
+  display: block;
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 3px;
+  line-height: 1.4;
+}
