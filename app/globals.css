@@ -1902,3 +1902,246 @@ select option { background: #ffffff !important; color: #0f172a !important; }
 .empty h3 { color: #0f172a !important; }
 .empty p { color: #64748b !important; }
 .erro { color: #e11d48 !important; }
+/* =========================================================
+   ETAPA 3 — TEMA CINZA ESCURO PROFISSIONAL (grafite + ciano)
+   Sobrescreve o tema claro. Cole SEMPRE no final do arquivo.
+   ========================================================= */
+:root {
+  --bg: #0e1319;
+  --bg-2: #121820;
+  --bg-3: #161d27;
+  --glass: rgba(255, 255, 255, 0.04);
+  --glass-2: rgba(255, 255, 255, 0.07);
+  --glass-3: rgba(11, 15, 20, 0.9);
+  --border: rgba(255, 255, 255, 0.09);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --purple: #0ea5e9;
+  --purple-deep: #0284c7;
+  --cyan: #22d3ee;
+  --blue: #38bdf8;
+  --green: #22d3ee;
+  --amber: #fbbf24;
+  --pink: #f472b6;
+  --red: #fb7185;
+  --text: #f2f4f8;
+  --text-2: #c3cbd8;
+  --muted: #8492a6;
+}
+
+body {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+/* ===== SIDEBAR — reforça (já escura, garante) ===== */
+.menu-lateral {
+  background: #0b0f14 !important;
+  border-right: 1px solid rgba(34, 211, 238, 0.14) !important;
+}
+.menu-lateral .menu-item { color: #a8b3c4 !important; }
+.menu-lateral .menu-item:hover {
+  background: rgba(34, 211, 238, 0.10) !important;
+  color: #ffffff !important;
+}
+.menu-lateral .menu-item.active {
+  background: linear-gradient(135deg, rgba(8, 145, 178, 0.9), rgba(14, 116, 144, 0.65)) !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 26px rgba(34, 211, 238, 0.30) !important;
+}
+.menu-lateral .menu-secao { color: #38bdf8 !important; }
+.menu-lateral .menu-usuario { background: rgba(255, 255, 255, 0.05) !important; border-color: rgba(255, 255, 255, 0.08) !important; }
+.menu-lateral .menu-usuario-info strong { color: #ffffff !important; }
+.menu-lateral .menu-usuario-info small { color: #7dd3fc !important; }
+.menu-lateral .menu-sair { color: #fda4af !important; }
+
+/* ===== HERO "OLÁ RENAN" — MESMA COR DA SIDEBAR (sólido, sem degrade) ===== */
+.dash-hero {
+  background: #0b0f14 !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+}
+.dash-hello { color: #22d3ee !important; }
+.dash-hero h1 { color: #ffffff !important; }
+.dash-hero p { color: #aab3c0 !important; }
+.dash-hero-avatar {
+  background: linear-gradient(135deg, #06b6d4, #0284c7) !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 22px rgba(34, 211, 238, 0.35) !important;
+  border: 2px solid rgba(34, 211, 238, 0.35) !important;
+}
+.dash-btn-primario {
+  background: linear-gradient(135deg, #06b6d4, #0284c7) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(34, 211, 238, 0.45) !important;
+  box-shadow: 0 10px 26px rgba(6, 182, 212, 0.30) !important;
+}
+.dash-btn-fantasma {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #dbe3ed !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+}
+.dash-btn-fantasma:hover { background: rgba(255, 255, 255, 0.09) !important; }
+
+/* ===== CARDS DO DASHBOARD — variação de cinzas (elevação) ===== */
+.bento-card {
+  background: #161d27 !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.30), inset 0 1px 0 rgba(255, 255, 255, 0.04) !important;
+  transition: transform .18s ease, box-shadow .2s ease, border-color .2s ease !important;
+}
+.bento-card:hover { transform: translateY(-2px) !important; border-color: rgba(34, 211, 238, 0.30) !important; box-shadow: 0 16px 40px rgba(0, 0, 0, 0.40) !important; }
+.stat-num { color: #ffffff !important; }
+.stat-label { color: #8492a6 !important; }
+.stat-icone { color: #22d3ee !important; }
+.sc-pedidos { border-left: 3px solid #22d3ee !important; }
+.sc-devolucoes { border-left: 3px solid #f472b6 !important; }
+
+.dash-progresso { background: rgba(255, 255, 255, 0.08) !important; }
+.dash-progresso-preenchido {
+  background: linear-gradient(90deg, #06b6d4, #0ea5e9) !important;
+  box-shadow: 0 0 14px rgba(34, 211, 238, 0.5) !important;
+}
+
+.acao-card {
+  background: #1c2430 !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+  transition: transform .18s ease, border-color .2s ease !important;
+}
+.acao-card:hover { transform: translateY(-3px) !important; border-color: rgba(34, 211, 238, 0.35) !important; }
+.acao-nome { color: #eaf0f7 !important; }
+.acao-desc { color: #8492a6 !important; }
+
+.dash-pedido-lista, .dash-item {
+  background: #161d27 !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+}
+.dash-item:hover { border-color: rgba(34, 211, 238, 0.30) !important; background: #1a222d !important; }
+.dash-item strong { color: #f2f4f8 !important; }
+.dash-data { color: #8492a6 !important; }
+.pedido-row-total { color: #22d3ee !important; }
+
+/* ===== CATÁLOGO ===== */
+.page-header h1 { color: #f2f4f8 !important; }
+.page-header p { color: #8492a6 !important; }
+.product-info {
+  background: #161d27 !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.30) !important;
+}
+.product-title { color: #f2f4f8 !important; }
+.product-img { background: rgba(255, 255, 255, 0.05) !important; }
+.field .label { color: #c3cbd8 !important; }
+.hint { color: #8492a6 !important; }
+.barra-flutuante {
+  background: #0b0f14 !important;
+  border: 1px solid rgba(34, 211, 238, 0.25) !important;
+  box-shadow: 0 16px 44px rgba(0, 0, 0, 0.55) !important;
+  color: #f2f4f8 !important;
+}
+
+/* ===== PEDIDO ===== */
+.ped-item {
+  background: #161d27 !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+}
+.ped-item-img { background: rgba(255, 255, 255, 0.05) !important; }
+.ped-item-titulo { color: #f2f4f8 !important; }
+.ped-item-spec { color: #8492a6 !important; }
+.ped-item-sku { color: #22d3ee !important; }
+.ped-resumo {
+  background: #161d27 !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+}
+.ped-resumo h3 { color: #f2f4f8 !important; }
+.ped-linha { color: #c3cbd8 !important; }
+.ped-linha.total strong { color: #22d3ee !important; }
+.btn-outline {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #dbe3ed !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+}
+
+/* ===== DEVOLUÇÕES / LISTAS ===== */
+.badge { font-weight: 800 !important; }
+.empty h3 { color: #f2f4f8 !important; }
+.empty p { color: #8492a6 !important; }
+.erro { color: #fb7185 !important; }
+.muted { color: #8492a6 !important; }
+
+/* ===== CAIXAS DE TEXTO — escuras (compatíveis) ===== */
+input[type="text"], input[type="email"], input[type="password"],
+input[type="number"], input[type="tel"], input[type="date"], textarea, select {
+  background: #0f141b !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  color: #f2f4f8 !important;
+  border-radius: 12px !important;
+  padding: 12px 15px !important;
+  font-size: 14px !important;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.35) !important;
+}
+input::placeholder, textarea::placeholder { color: #5b6779 !important; }
+input:focus, textarea:focus, select:focus {
+  border-color: #22d3ee !important;
+  box-shadow: 0 0 0 3px rgba(34, 211, 238, 0.18) !important;
+  outline: none;
+}
+select option { background: #0f141b !important; color: #f2f4f8 !important; }
+
+/* ===== HEADER SUPERIOR ===== */
+.nav { background: #0e1319 !important; border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important; }
+.nav-logo { color: #ffffff !important; }
+.nav-links a { color: #a8b3c4 !important; }
+.nav-links a:hover { color: #22d3ee !important; }
+
+/* ===== BOTÃO PRINCIPAL — CIANO ===== */
+.btn-primary {
+  background: linear-gradient(135deg, #06b6d4, #0284c7) !important;
+  border: 1px solid rgba(34, 211, 238, 0.45) !important;
+  color: #ffffff !important;
+  box-shadow: 0 10px 28px rgba(6, 182, 212, 0.30) !important;
+}
+.btn-primary:hover {
+  background: linear-gradient(135deg, #22d3ee, #0ea5e9) !important;
+  color: #ffffff !important;
+}
+
+/* ===== PÁGINA DO PRODUTO ===== */
+.pd-info-card, .loj-card {
+  background: #161d27 !important;
+  border: 1px solid rgba(255, 255, 255, 0.07) !important;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.35) !important;
+}
+.pd-categoria { color: #22d3ee !important; }
+.pd-title { color: #ffffff !important; }
+.pd-custo { background: rgba(251, 113, 133, 0.08) !important; border-color: rgba(251, 113, 133, 0.25) !important; }
+.pd-custo-label { color: #fb7185 !important; }
+.pd-custo-valor { color: #fb7185 !important; }
+.pd-venda-sugerida { background: rgba(34, 211, 238, 0.07) !important; border-color: rgba(34, 211, 238, 0.35) !important; }
+.pd-venda-sugerida-label { color: #22d3ee !important; }
+.pd-venda-sugerida-valor { color: #22d3ee !important; }
+.pd-chip-chamativo { color: #7dd3fc !important; background: rgba(34, 211, 238, 0.12) !important; border-color: rgba(34, 211, 238, 0.40) !important; }
+.pd-galeria-principal { background: #0f141b !important; border: 1px solid rgba(255, 255, 255, 0.08) !important; }
+.pd-thumb { background: #0f141b !important; border-color: rgba(255, 255, 255, 0.10) !important; }
+.pd-thumb.ativo { border-color: #22d3ee !important; box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.35) !important; }
+.pd-fallback { background: rgba(34, 211, 238, 0.07) !important; border: 1px dashed rgba(34, 211, 238, 0.30) !important; }
+.pd-fallback p { color: #f2f4f8 !important; }
+.pd-baixar-fotos {
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.14), rgba(2, 132, 199, 0.06)) !important;
+  border: 1px solid rgba(34, 211, 238, 0.40) !important;
+  color: #7dd3fc !important;
+}
+.pd-cor, .pd-tam { background: rgba(255, 255, 255, 0.05) !important; color: #c3cbd8 !important; border-color: rgba(255, 255, 255, 0.12) !important; }
+.pd-cor.ativo, .pd-tam.ativo { background: linear-gradient(135deg, #06b6d4, #0284c7) !important; color: #ffffff !important; border-color: transparent !important; }
+.pd-sku { color: #8492a6 !important; }
+.pd-qtd button { background: rgba(255, 255, 255, 0.06) !important; color: #f2f4f8 !important; border-color: rgba(255, 255, 255, 0.12) !important; }
+.pd-qtd input { color: #f2f4f8 !important; }
+
+/* ===== TÍTULOS E DESCRIÇÕES (anúncio) ===== */
+.loj-card-topo h3 { color: #f2f4f8 !important; }
+.loj-sub { color: #8492a6 !important; }
+.loj-titulo-opcao { background: rgba(255, 255, 255, 0.04) !important; border-color: rgba(255, 255, 255, 0.08) !important; }
+.loj-titulo-opcao p { color: #dbe3ed !important; }
+.loj-desc-texto { background: rgba(255, 255, 255, 0.03) !important; border-color: rgba(255, 255, 255, 0.09) !important; color: #dbe3ed !important; }
+.loj-btn-copiar { color: #c3cbd8 !important; border-color: rgba(255, 255, 255, 0.16) !important; }
+.loj-btn-copiar:hover { border-color: #22d3ee !important; color: #7dd3fc !important; }
+.loj-btn-copiar.copiado { background: rgba(34, 211, 238, 0.14) !important; color: #7dd3fc !important; border-color: rgba(34, 211, 238, 0.45) !important; }
