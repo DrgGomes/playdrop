@@ -7,11 +7,34 @@ import { supabase } from '../../../lib/supabaseClient';
 import { getCurrentUser } from '../../../lib/auth';
 import HotbarCliente from '../../components/HotbarCliente';
 
-function formatarValor(v) {
-  const n = Number(v);
-  if (isNaN(n)) return 'R$ 0,00';
-  return 'R$ ' + n.toFixed(2).replace('.', ',');
+<div className="pd-custo">
+  <span className="pd-custo-label">Seu custo final (embalado + etiquetado + envio)</span>
+  <span className="pd-custo-valor">{formatarValor(produto.preco_sugerido)}</span>
+</div>
+
+{(() => {
+  const custo = Number(produto.preco_sugerido) || 0;
+  if (custo <= 0) return null;
+  const pMin = (custo + FRETE_FIXO + LUCRO_MINIMO) / (1 - TAXA_MARKETPLACE);
+  const pMax = (custo + FRETE_FIXO + custo * LUCRO_MAXIMO_PCT) / (1 - TAXA_MARKETPLACE);
+  return (
+    <div className="pd-venda-sugerida">
+      <span className="pd-venda-sugerida-label">💡 PREÇO DE VENDA SUGERIDO</span>
+      <span className="pd-venda-sugerida-valor">
+        {formatarValor(pMin)} <span className="pd-venda-sep">a</span> {formatarValor(pMax)}
+      </span>
+      <span className="pd-venda-sugerida-hint">
+        Calculado com ~20% de taxas do marketplace + R$ 5,00 de frete e lucro a partir de R$ 8,00 por peça.
+      </span>
+    </div>
+  );
+})()}
 }
+/* ===== Cálculo do preço de venda sugerido ===== */
+const TAXA_MARKETPLACE = 0.20; // ~20% de taxas/comissão sobre o preço de venda
+const FRETE_FIXO = 5;          // R$ 5,00 de frete fixo
+const LUCRO_MINIMO = 8;        // lucro mínimo de R$ 8,00 por peça
+const LUCRO_MAXIMO_PCT = 0.60; // teto: 60% do custo como lucro sugerido (ajuste aqui)
 
 /* ===== Gerador de títulos estilo Mercado Livre ===== */
 function limparBase(t) {
