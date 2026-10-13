@@ -1802,3 +1802,103 @@ select option { background: #ffffff !important; color: #0f172a !important; }
   color: #0891b2 !important;
   border-color: rgba(6, 182, 212, 0.45) !important;
 }
+/* =========================================================
+   ETAPA 2 — AJUSTES FINOS POR TELA (tema claro + ciano)
+   ========================================================= */
+
+/* ===== DASHBOARD ===== */
+.dash-hero {
+  background: #ffffff !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: 0 12px 34px rgba(15, 23, 42, 0.08) !important;
+}
+.dash-hello { color: #0891b2 !important; }
+.dash-hero h1 { color: #0f172a !important; }
+.dash-hero p { color: #64748b !important; }
+.dash-hero-avatar {
+  background: linear-gradient(135deg, #06b6d4, #0284c7) !important;
+  color: #ffffff !important;
+  box-shadow: 0 6px 18px rgba(34, 211, 238, 0.35) !important;
+}
+.dash-btn-primario {
+  background: linear-gradient(135deg, #06b6d4, #0284c7) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(6, 182, 212, 0.5) !important;
+}
+.dash-btn-fantasma {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid rgba(15, 23, 42, 0.18) !important;
+}
+.bento-card {
+  background: #ffffff !important;
+  border: 1px solid rgba(15, 23, 42, 0.10) !important;
+  box-shadow: 0 12px 34px rgba(15, 23, 42, 0.08) !important;
+}
+.stat-num { color: #0f172a !important; }
+.stat-label { color: #64748b !important; }
+.stat-icone { color: #0891b2 !important; }
+.sc-pedidos { border-top: 3px solid #06b6d4 !important; }
+.dash-progresso { background: rgba(15, 23, 42, 0.08) !important; }
+.dash-progresso-preenchido {
+  background: linear-gradient(90deg, #06b6d4, #0ea5e9) !important;
+}
+.acao-card {
+  background: #ffffff !important;
+  border: 1px solid rgba(15, 23, 42, 0.10) !important;
+}
+.acao-nome { color: #0f172a !important; }
+.acao-desc { color: #64748b !important; }
+.dash-pedido-lista, .dash-item {
+  background: #ffffff !important;
+  border: 1px solid rgba(15, 23, 42, 0.10) !important;
+}
+.dash-item strong { color: #0f172a !important; }
+.dash-data { color: #64748b !important; }
+.pedido-row-total { color: #0891b2 !important; }
+.dash-loading { color: #64748b !important; }
+
+/* ===== CATÁLOGO ===== */
+.page-header h1 { color: #0f172a !important; }
+.page-header p { color: #64748b !important; }
+.product-info {
+  background: #ffffff !important;
+  border: 1px solid rgba(15, 23, 42, 0.10) !important;
+}
+.product-title { color: #0f172a !important; }
+.product-img { background: rgba(15, 23, 42, 0.06) !important; }
+.field .label { color: #334155 !important; }
+.hint { color: #64748b !important; }
+.barra-flutuante {
+  background: #ffffff !important;
+  border: 1px solid rgba(15, 23, 42, 0.12) !important;
+  box-shadow: 0 12px 34px rgba(15, 23, 42, 0.15) !important;
+  color: #0f172a !important;
+}
+
+/* ===== PEDIDO ===== */
+.ped-item {
+  background: #ffffff !important;
+  border: 1px solid rgba(15, 23, 42, 0.10) !important;
+}
+.ped-item-img { background: rgba(15, 23, 42, 0.06) !important; }
+.ped-item-titulo { color: #0f172a !important; }
+.ped-item-spec { color: #64748b !important; }
+.ped-item-sku { color: #0891b2 !important; }
+.ped-resumo {
+  background: #ffffff !important;
+  border: 1px solid rgba(15, 23, 42, 0.10) !important;
+}
+.ped-resumo h3 { color: #0f172a !important; }
+.ped-linha { color: #334155 !important; }
+.ped-linha.total strong { color: #0891b2 !important; }
+.btn-outline {
+  background: #ffffff !important;
+  color: #334155 !important;
+  border: 1px solid rgba(15, 23, 42, 0.18) !important;
+}
+
+/* ===== GENÉRICO ===== */
+.empty h3 { color: #0f172a !important; }
+.empty p { color: #64748b !important; }
+.erro { color: #e11d48 !important; }
