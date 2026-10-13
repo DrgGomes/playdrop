@@ -1399,6 +1399,13 @@ select option {
   padding: 22px;
 }
 .loj-card-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
 /* ===== PREÇOS CHAMATIVOS (terminados em ,90) ===== */
 .pd-chamativos {
   display: flex;
