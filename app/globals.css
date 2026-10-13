@@ -1396,3 +1396,52 @@ select option {
 @media (max-width: 800px) {
   .loj-grid-2 { grid-template-columns: 1fr; }
 }
+/* ===== CUSTO + PREÇO DE VENDA SUGERIDO ===== */
+.pd-custo { margin-bottom: 6px; }
+.pd-custo-label {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 600;
+  margin-bottom: 1px;
+}
+.pd-custo-valor {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.pd-venda-sugerida {
+  margin: 12px 0 22px;
+  border-radius: 16px;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.18), rgba(34, 211, 238, 0.10));
+  border: 1px solid rgba(139, 92, 246, 0.4);
+  box-shadow: 0 10px 30px rgba(139, 92, 246, 0.12);
+}
+.pd-venda-sugerida-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .06em;
+  color: #c4b5fd;
+  margin-bottom: 2px;
+}
+.pd-venda-sugerida-valor {
+  font-size: 26px;
+  font-weight: 800;
+  color: var(--green);
+}
+.pd-venda-sep {
+  font-size: 14px;
+  color: var(--muted);
+  font-weight: 600;
+  margin: 0 6px;
+}
+.pd-venda-sugerida-hint {
+  display: block;
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 4px;
+  line-height: 1.4;
+}
