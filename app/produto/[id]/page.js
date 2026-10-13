@@ -195,37 +195,38 @@ export default function ProdutoDetalhePage() {
         preco_unitario: Number(produto.preco_sugerido) || 0,
       });
     }
-    // Baixa todas as fotos do produto (uma por uma, sem instalar nada)
-async function baixarTodasFotos() {
-  if (fotos.length === 0) return;
-
-  const nomeBase = (produto.titulo || 'produto')
-    .toLowerCase()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '') || 'produto';
-
-  for (let i = 0; i < fotos.length; i++) {
-    try {
-      const resp = await fetch(fotos[i]);
-      const blob = await resp.blob();
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      const ext = (blob.type.split('/')[1] || 'jpg').replace('jpeg', 'jpg');
-      link.download = `${nomeBase}-${i + 1}.${ext}`;
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-      await new Promise((r) => setTimeout(r, 500));
-    } catch {}
-  }
-}
     localStorage.setItem('playdrop_carrinho', JSON.stringify(carrinho));
     window.dispatchEvent(new Event('playdrop_carrinho'));
     router.push('/pedido');
+  }
+
+  // Baixa todas as fotos do produto (uma por uma, sem instalar nada)
+  async function baixarTodasFotos() {
+    if (fotos.length === 0) return;
+
+    const nomeBase = (produto.titulo || 'produto')
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') || 'produto';
+
+    for (let i = 0; i < fotos.length; i++) {
+      try {
+        const resp = await fetch(fotos[i]);
+        const blob = await resp.blob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        const ext = (blob.type.split('/')[1] || 'jpg').replace('jpeg', 'jpg');
+        link.download = `${nomeBase}-${i + 1}.${ext}`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        await new Promise((r) => setTimeout(r, 500));
+      } catch {}
+    }
   }
 
   const custo = Number(produto.preco_sugerido) || 0;
@@ -251,11 +252,7 @@ async function baixarTodasFotos() {
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32, alignItems: 'start' }}>
           {/* GALERIA */}
-          <div className="pd-galeria"{fotos.length > 0 && (
-  <button className="pd-baixar-fotos" onClick={baixarTodasFotos}>
-    ⬇️ Baixar todas as fotos ({fotos.length})
-  </button>
-)}>
+          <div className="pd-galeria">
             <div className="pd-galeria-principal">
               {fotoAtual ? (
                 <img
@@ -289,6 +286,13 @@ async function baixarTodasFotos() {
                   </button>
                 ))}
               </div>
+            )}
+
+            {/* BOTÃO BAIXAR TODAS AS FOTOS */}
+            {fotos.length > 0 && (
+              <button className="pd-baixar-fotos" onClick={baixarTodasFotos}>
+                ⬇️ Baixar todas as fotos ({fotos.length})
+              </button>
             )}
           </div>
 
