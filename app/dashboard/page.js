@@ -29,9 +29,15 @@ function formatarValor(v) {
 
 function formatarData(d) {
   if (!d) return '';
+  const t = new Date(d);
+  if (isNaN(t.getTime())) return '';
   try {
-    return new Date(d).toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
+    return t.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' });
   } catch { return ''; }
+}
+
+function infoStatus(s) {
+  return STATUS_INFO[s] || { label: (s || '—'), cor: '#8a94a6' };
 }
 
 export default function DashboardPage() {
@@ -40,37 +46,41 @@ export default function DashboardPage() {
   const [stats, setStats] = useState(null);
   const [avisos, setAvisos] = useState(AVISOS_PADRAO);
   const [carregando, setCarregando] = useState(true);
+  const [pronto, setPronto] = useState(false);
   const [busca, setBusca] = useState('');
+
+  useEffect(() => { setPronto(true); }, []);
 
   useEffect(() => {
     async function iniciar() {
-      const user = await getCurrentUser();
-      if (!user) { router.push('/login'); return; }
-      const { data: perfil } = await getProfile(user.id);
-      const meta = user.user_metadata || {};
-      const nomeConta = (perfil?.nome || perfil?.nome_completo || meta.nome || meta.name || '').trim();
-      const zapConta = (perfil?.whatsapp || perfil?.telefone || meta.whatsapp || '').trim();
-      setNome(nomeConta);
+      try {
+        const user = await getCurrentUser();
+        if (!user) { router.push('/login'); return; }
+        const { data: perfil } = await getProfile(user.id);
+        const meta = user.user_metadata || {};
+        const nomeConta = (perfil?.nome || perfil?.nome_completo || meta.nome || meta.name || '').trim();
+        const zapConta = (perfil?.whatsapp || perfil?.telefone || meta.whatsapp || '').trim();
+        setNome(nomeConta);
 
-      if (zapConta) {
-        const { data } = await supabase.rpc('dashboard_cliente', { p_whatsapp: zapConta });
-        if (data) setStats(data);
-      }
+        if (zapConta) {
+          const { data } = await supabase.rpc('dashboard_cliente', { p_whatsapp: zapConta });
+          if (data) setStats(data);
+        }
 
-      const { data: avisosDb, error: errAvisos } = await supabase
-        .from('avisos')
-        .select('*')
-        .eq('ativo', true)
-        .order('criado_em', { ascending: false })
-        .limit(4);
-      if (!errAvisos && avisosDb && avisosDb.length > 0) setAvisos(avisosDb);
-
+        const { data: avisosDb, error: errAvisos } = await supabase
+          .from('avisos')
+          .select('*')
+          .eq('ativo', true)
+          .order('criado_em', { ascending: false })
+          .limit(4);
+        if (!errAvisos && avisosDb && avisosDb.length > 0) setAvisos(avisosDb);
+      } catch {}
       setCarregando(false);
     }
     iniciar();
   }, [router]);
 
-  if (carregando) {
+  if (carregando || !pronto) {
     return (
       <>
         <div className="kv-loading">
@@ -84,62 +94,63 @@ export default function DashboardPage() {
 
   const primeiroNome = nome.split(' ')[0] || 'cliente';
   const inicial = nome ? nome.trim()[0]?.toUpperCase() : '👤';
-  const ultimos = stats?.ultimos_pedidos || [];
-  const totalPedidos = stats?.total_pedidos || 0;
-  const totalDevolucoes = stats?.total_devolucoes || 0;
+  const ultimos = (stats && Array.isArray(stats.ultimos_pedidos)) ? stats.ultimos_pedidos : [];
+  const totalPedidos = Number(stats?.total_pedidos) || 0;
+  const totalDevolucoes = Number(stats?.total_devolucoes) || 0;
   const entregues = ultimos.filter((p) => p.status === 'entregue').length;
   const emAndamento = ultimos.filter((p) => p.status !== 'entregue' && p.status !== 'cancelado').length;
   let totalGasto = 0;
   ultimos.forEach((p) => { totalGasto += Number(p.total) || 0; });
   const taxaConclusao = totalPedidos > 0 ? Math.round((entregues / totalPedidos) * 100) : 0;
 
-  // ===== GRÁFICO: VENDAS DOS ÚLTIMOS 7 DIAS (dados reais dos pedidos) =====
   const vendas7d = useMemo(() => {
-    const dias = [];
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
-      dias.push({
-        chave: `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`,
-        label: d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }),
-        total: 0,
+    try {
+      const dias = [];
+      const hoje = new Date();
+      for (let i = 6; i >= 0; i--) {
+        const d = new Date(hoje);
+        d.setDate(d.getDate() - i);
+        dias.push({
+          chave: d.getFullYear() + '-' + d.getMonth() + '-' + d.getDate(),
+          label: d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }),
+          total: 0,
+        });
+      }
+      ultimos.forEach((p) => {
+        const dia = new Date(p.criado_em);
+        if (isNaN(dia.getTime())) return;
+        const chave = dia.getFullYear() + '-' + dia.getMonth() + '-' + dia.getDate();
+        const alvo = dias.find((d) => d.chave === chave);
+        if (alvo) alvo.total += Number(p.total) || 0;
       });
-    }
-    ultimos.forEach((p) => {
-      const dia = new Date(p.criado_em);
-      if (isNaN(dia.getTime())) return;
-      const chave = `${dia.getFullYear()}-${dia.getMonth()}-${dia.getDate()}`;
-      const alvo = dias.find((d) => d.chave === chave);
-      if (alvo) alvo.total += Number(p.total) || 0;
-    });
-    const max = Math.max(...dias.map((d) => d.total), 1);
-    return dias.map((d) => ({ ...d, altura: Math.max(6, Math.round((d.total / max) * 100)) }));
+      const max = Math.max(...dias.map((d) => d.total), 1);
+      return dias.map((d) => ({ ...d, altura: Math.max(6, Math.round((d.total / max) * 100)) }));
+    } catch { return []; }
   }, [ultimos]);
 
   const total7d = vendas7d.reduce((s, d) => s + d.total, 0);
 
-  // ===== FEED DE ATIVIDADES (pedidos + avisos) =====
   const atividades = useMemo(() => {
     const lista = ultimos.slice(0, 6).map((p) => {
-      const info = STATUS_INFO[p.status] || { label: p.status };
+      const st = infoStatus(p.status).label;
       const emoji = p.status === 'entregue' ? '✅' : p.status === 'cancelado' ? '❌' : '📦';
-      return { id: 'ped-' + p.numero, emoji, titulo: `Pedido #${p.numero} — ${info.label}`, mensagem: formatarData(p.criado_em) };
+      return { id: 'ped-' + String(p.numero ?? ''), emoji, titulo: 'Pedido #' + String(p.numero ?? '?') + ' - ' + st, mensagem: formatarData(p.criado_em) };
     });
-    const comAvisos = [...lista, ...avisos.map((a) => ({ id: 'av-' + a.id, emoji: a.emoji || '📢', titulo: a.titulo, mensagem: a.mensagem }))];
+    const comAvisos = [...lista, ...avisos.map((a) => ({ id: 'av-' + String(a.id ?? ''), emoji: a.emoji || '📢', titulo: a.titulo || '', mensagem: a.mensagem || '' }))];
     return comAvisos.slice(0, 8);
   }, [ultimos, avisos]);
 
-  // ===== BUSCA (filtra a tabela de pedidos) =====
   const pedidosFiltrados = busca.trim()
-    ? ultimos.filter((p) =>
-        String(p.numero).includes(busca.trim()) ||
-        ((STATUS_INFO[p.status] || { label: p.status }).label.toLowerCase().includes(busca.trim().toLowerCase()))
-      )
+    ? ultimos.filter((p) => {
+        const num = String(p.numero ?? '');
+        const st = infoStatus(p.status).label.toLowerCase();
+        const termo = busca.trim().toLowerCase();
+        return num.includes(termo) || st.includes(termo);
+      })
     : ultimos;
 
   return (
     <div className="kv-dash">
-      {/* TOPBAR KORVO */}
       <header className="kv-topbar">
         <div className="kv-topbar-inner">
           <Link href="/dashboard" className="kv-brand">
@@ -166,7 +177,6 @@ export default function DashboardPage() {
       </header>
 
       <main className="kv-container">
-        {/* SAUDAÇÃO */}
         <div className="kv-hello">
           <div>
             <h1>Olá, {primeiroNome} 👋</h1>
@@ -175,7 +185,6 @@ export default function DashboardPage() {
           <Link href="/catalogo" className="kv-btn-primario">+ Ver catálogo</Link>
         </div>
 
-        {/* CARDS DE MÉTRICAS */}
         <section className="kv-cards">
           <div className="kv-card">
             <span className="kv-card-icone">📦</span>
@@ -207,7 +216,6 @@ export default function DashboardPage() {
           </div>
         </section>
 
-        {/* GRÁFICO 7 DIAS + FEED */}
         <section className="kv-duplo">
           <div className="kv-painel">
             <div className="kv-painel-cabecalho">
@@ -254,7 +262,6 @@ export default function DashboardPage() {
           </div>
         </section>
 
-        {/* PEDIDOS RECENTES — TABELA */}
         <section className="kv-painel">
           <div className="kv-painel-cabecalho">
             <h2>Pedidos recentes</h2>
@@ -275,10 +282,10 @@ export default function DashboardPage() {
                 <span>Total</span>
               </div>
               {pedidosFiltrados.map((p) => {
-                const info = STATUS_INFO[p.status] || { label: p.status, cor: '#888' };
+                const info = infoStatus(p.status);
                 return (
-                  <div className="kv-tabela-linha" key={p.numero}>
-                    <span className="kv-tabela-num">#{p.numero}</span>
+                  <div className="kv-tabela-linha" key={String(p.numero ?? '') + '-' + idx}>
+                    <span className="kv-tabela-num">#{String(p.numero ?? '?')}</span>
                     <span className="kv-tabela-data">{formatarData(p.criado_em)}</span>
                     <span><span className="kv-status" style={{ background: info.cor + '1f', color: info.cor }}>{info.label}</span></span>
                     <strong className="kv-tabela-total">{formatarValor(p.total)}</strong>
