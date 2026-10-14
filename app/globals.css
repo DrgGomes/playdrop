@@ -2373,3 +2373,139 @@ select option { background: #ffffff !important; color: #111827 !important; }
   .menu-logo-marca { width: 44px; height: 44px; }
   .menu-logo-marca::after { content: '' !important; }
 }
+/* =========================================================
+   ETAPA DASHBOARD — VISUAL KORVO (mockup)
+   Menu escuro + conteúdo claro + cards e gráfico no padrão
+   ========================================================= */
+
+/* ===== TOPO DO APP (nav) — cara de painel KORVO ===== */
+.nav {
+  background: #ffffff !important;
+  border-bottom: 1px solid rgba(10, 10, 10, 0.08) !important;
+  box-shadow: 0 1px 0 rgba(10, 10, 10, 0.04), 0 8px 24px rgba(10, 10, 10, 0.05) !important;
+}
+.nav-logo {
+  color: #0a0a0a !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.02em !important;
+}
+.nav-links a {
+  color: #4b5563 !important;
+  font-weight: 600 !important;
+  padding: 8px 14px !important;
+  border-radius: 999px !important;
+  transition: color .15s, background .15s !important;
+}
+.nav-links a:hover {
+  background: rgba(0, 229, 255, 0.10) !important;
+  color: #0096b4 !important;
+}
+
+/* ===== HERO "OLÁ, NOME" — sem gradiente, branco sólido ===== */
+.dash-hero {
+  background: #ffffff !important;
+  background-image: none !important;
+  border: 1px solid rgba(10, 10, 10, 0.08) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 1px 2px rgba(10, 10, 10, 0.04), 0 12px 32px rgba(10, 10, 10, 0.06) !important;
+}
+.dash-hero::before, .dash-hero::after {
+  background: none !important;
+  background-image: none !important;
+}
+.dash-hello {
+  color: #00b8d4 !important;
+  font-weight: 800 !important;
+  letter-spacing: .04em !important;
+}
+.dash-hero h1 { color: #111827 !important; font-weight: 900 !important; }
+.dash-hero p { color: #6b7280 !important; }
+.dash-hero-avatar {
+  background: linear-gradient(135deg, #00e5ff, #00b8d4) !important;
+  color: #0a0a0a !important;
+  font-weight: 900 !important;
+  border: 2px solid rgba(0, 229, 255, 0.35) !important;
+  box-shadow: 0 8px 22px rgba(0, 229, 255, 0.30) !important;
+}
+
+/* ===== CARDS DE MÉTRICAS — estilo mockup KORVO ===== */
+.bento-card {
+  background: #ffffff !important;
+  border: 1px solid rgba(10, 10, 10, 0.07) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 1px 2px rgba(10, 10, 10, 0.04), 0 8px 24px rgba(10, 10, 10, 0.06) !important;
+  transition: transform .18s ease, border-color .2s ease, box-shadow .2s ease !important;
+}
+.bento-card:hover {
+  transform: translateY(-2px) !important;
+  border-color: rgba(0, 229, 255, 0.35) !important;
+  box-shadow: 0 12px 30px rgba(10, 10, 10, 0.08) !important;
+}
+.stat-icone {
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 12px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 20px !important;
+  background: rgba(0, 229, 255, 0.10) !important;
+}
+.sc-pedidos .stat-icone { background: rgba(0, 229, 255, 0.12) !important; }
+.sc-gastos .stat-icone, .sc-devolucoes .stat-icone { background: rgba(0, 229, 255, 0.08) !important; }
+.sc-pedidos { border-left: 4px solid #00e5ff !important; }
+.sc-devolucoes { border-left: 4px solid #f472b6 !important; }
+.stat-num { color: #111827 !important; font-weight: 900 !important; }
+.stat-label { color: #6b7280 !important; font-weight: 600 !important; }
+
+/* ===== PROGRESSO + BARRAS — CIANO KORVO ===== */
+.dash-progresso {
+  background: rgba(10, 10, 10, 0.07) !important;
+  border-radius: 999px !important;
+  overflow: hidden !important;
+}
+.dash-progresso-preenchido {
+  background: linear-gradient(90deg, #00e5ff, #00b8d4) !important;
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.45) !important;
+  border-radius: 999px !important;
+}
+.bento-grafico { border-radius: 16px !important; }
+.bento-grafico-titulo span { color: #111827 !important; font-weight: 800 !important; }
+.bento-grafico-titulo strong { color: #00b8d4 !important; }
+.bento-barra-linha { border-radius: 8px !important; }
+.bento-barra-label { color: #374151 !important; font-weight: 700 !important; }
+
+/* ===== AÇÕES RÁPIDAS ===== */
+.acao-card {
+  background: #ffffff !important;
+  border: 1px solid rgba(10, 10, 10, 0.07) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 1px 2px rgba(10, 10, 10, 0.04), 0 8px 22px rgba(10, 10, 10, 0.05) !important;
+  transition: transform .18s ease, border-color .2s ease !important;
+}
+.acao-card:hover {
+  transform: translateY(-3px) !important;
+  border-color: rgba(0, 229, 255, 0.40) !important;
+}
+.acao-emoji {
+  background: rgba(0, 229, 255, 0.10) !important;
+  border-radius: 12px !important;
+}
+.acao-nome { color: #111827 !important; font-weight: 800 !important; }
+.acao-desc { color: #6b7280 !important; }
+
+/* ===== ÚLTIMOS PEDIDOS ===== */
+.dash-pedido-lista, .dash-item {
+  background: #ffffff !important;
+  border: 1px solid rgba(10, 10, 10, 0.07) !important;
+  border-radius: 14px !important;
+}
+.dash-item strong { color: #111827 !important; }
+.dash-data { color: #6b7280 !important; }
+.pedido-row-total {
+  color: #0a0a0a !important;
+  background: rgba(0, 229, 255, 0.12) !important;
+  border-radius: 999px !important;
+  padding: 4px 12px !important;
+  font-weight: 800 !important;
+}
