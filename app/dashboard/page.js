@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { supabase } from '../../lib/supabaseClient';
@@ -40,12 +40,12 @@ export default function DashboardPage() {
   const [stats, setStats] = useState(null);
   const [avisos, setAvisos] = useState(AVISOS_PADRAO);
   const [carregando, setCarregando] = useState(true);
+  const [busca, setBusca] = useState('');
 
   useEffect(() => {
     async function iniciar() {
       const user = await getCurrentUser();
       if (!user) { router.push('/login'); return; }
-
       const { data: perfil } = await getProfile(user.id);
       const meta = user.user_metadata || {};
       const nomeConta = (perfil?.nome || perfil?.nome_completo || meta.nome || meta.name || '').trim();
@@ -73,8 +73,8 @@ export default function DashboardPage() {
   if (carregando) {
     return (
       <>
-        <div className="dash-loading">
-          <div className="dash-loading-spin"></div>
+        <div className="kv-loading">
+          <div className="kv-spin"></div>
           <p>Carregando seu painel...</p>
         </div>
         <HotbarCliente />
@@ -93,215 +93,202 @@ export default function DashboardPage() {
   ultimos.forEach((p) => { totalGasto += Number(p.total) || 0; });
   const taxaConclusao = totalPedidos > 0 ? Math.round((entregues / totalPedidos) * 100) : 0;
 
-  // distribuição por status (para o micro-gráfico de barras)
-  const contagemStatus = {};
-  ultimos.forEach((p) => {
-    const st = p.status || 'pendente';
-    contagemStatus[st] = (contagemStatus[st] || 0) + 1;
-  });
-  const barras = Object.entries(contagemStatus)
-    .map(([st, qtd]) => ({
-      status: st,
-      qtd,
-      pct: ultimos.length > 0 ? Math.round((qtd / ultimos.length) * 100) : 0,
-      info: STATUS_INFO[st] || { label: st, cor: '#888' },
-    }))
-    .sort((a, b) => b.qtd - a.qtd)
-    .slice(0, 4);
+  // ===== GRÁFICO: VENDAS DOS ÚLTIMOS 7 DIAS (dados reais dos pedidos) =====
+  const vendas7d = useMemo(() => {
+    const dias = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      dias.push({
+        chave: `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`,
+        label: d.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' }),
+        total: 0,
+      });
+    }
+    ultimos.forEach((p) => {
+      const dia = new Date(p.criado_em);
+      if (isNaN(dia.getTime())) return;
+      const chave = `${dia.getFullYear()}-${dia.getMonth()}-${dia.getDate()}`;
+      const alvo = dias.find((d) => d.chave === chave);
+      if (alvo) alvo.total += Number(p.total) || 0;
+    });
+    const max = Math.max(...dias.map((d) => d.total), 1);
+    return dias.map((d) => ({ ...d, altura: Math.max(6, Math.round((d.total / max) * 100)) }));
+  }, [ultimos]);
 
-  const destaque = avisos[0] || null;
-  const outrosAvisos = avisos.filter((a) => a.id !== (destaque?.id));
+  const total7d = vendas7d.reduce((s, d) => s + d.total, 0);
+
+  // ===== FEED DE ATIVIDADES (pedidos + avisos) =====
+  const atividades = useMemo(() => {
+    const lista = ultimos.slice(0, 6).map((p) => {
+      const info = STATUS_INFO[p.status] || { label: p.status };
+      const emoji = p.status === 'entregue' ? '✅' : p.status === 'cancelado' ? '❌' : '📦';
+      return { id: 'ped-' + p.numero, emoji, titulo: `Pedido #${p.numero} — ${info.label}`, mensagem: formatarData(p.criado_em) };
+    });
+    const comAvisos = [...lista, ...avisos.map((a) => ({ id: 'av-' + a.id, emoji: a.emoji || '📢', titulo: a.titulo, mensagem: a.mensagem }))];
+    return comAvisos.slice(0, 8);
+  }, [ultimos, avisos]);
+
+  // ===== BUSCA (filtra a tabela de pedidos) =====
+  const pedidosFiltrados = busca.trim()
+    ? ultimos.filter((p) =>
+        String(p.numero).includes(busca.trim()) ||
+        ((STATUS_INFO[p.status] || { label: p.status }).label.toLowerCase().includes(busca.trim().toLowerCase()))
+      )
+    : ultimos;
 
   return (
-    <div className="dash-page">
-      <header className="nav">
-        <div className="container">
-          <span className="nav-logo">PlayDrop</span>
-          <nav className="nav-links">
-            <Link href="/catalogo">Catálogo</Link>
-            <Link href="/pedido">🛒 Ver pedido</Link>
-          </nav>
+    <div className="kv-dash">
+      {/* TOPBAR KORVO */}
+      <header className="kv-topbar">
+        <div className="kv-topbar-inner">
+          <Link href="/dashboard" className="kv-brand">
+            <span className="kv-brand-marca">PlayDrop</span>
+            <span className="kv-brand-sub">by KORVO</span>
+          </Link>
+          <div className="kv-busca">
+            <span className="kv-busca-icone">🔍</span>
+            <input
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+              placeholder="Buscar pedidos (número ou status)..."
+              aria-label="Buscar pedidos"
+            />
+          </div>
+          <div className="kv-topbar-acoes">
+            <Link href="/devolucoes" className="kv-sino" aria-label="Notificações (devoluções)">
+              🔔
+              {totalDevolucoes > 0 && <span className="kv-sino-badge">{totalDevolucoes}</span>}
+            </Link>
+            <span className="kv-avatar" title={nome}>{inicial}</span>
+          </div>
         </div>
       </header>
 
-      <div className="dash-wrap container">
-        {/* HERO */}
-        <section className="dash-hero">
-          <div className="dash-hero-bolha hb1"></div>
-          <div className="dash-hero-bolha hb2"></div>
-          <div className="dash-hero-bolha hb3"></div>
-          <div className="dash-hero-texto">
-            <span className="dash-hello">👋 Bem-vindo de volta</span>
-            <h1>Olá, <span>{primeiroNome}</span>!</h1>
-            <p>Acompanhe pedidos, devoluções e novidades em um só lugar.</p>
-            <div className="dash-hero-botoes">
-              <Link href="/catalogo" className="dash-btn dash-btn-primario">🛍️ Ver catálogo</Link>
-              <Link href="/devolucoes/solicitar" className="dash-btn dash-btn-fantasma">↩️ Solicitar devolução</Link>
+      <main className="kv-container">
+        {/* SAUDAÇÃO */}
+        <div className="kv-hello">
+          <div>
+            <h1>Olá, {primeiroNome} 👋</h1>
+            <p>Acompanhe suas vendas, pedidos e devoluções em um só lugar.</p>
+          </div>
+          <Link href="/catalogo" className="kv-btn-primario">+ Ver catálogo</Link>
+        </div>
+
+        {/* CARDS DE MÉTRICAS */}
+        <section className="kv-cards">
+          <div className="kv-card">
+            <span className="kv-card-icone">📦</span>
+            <div>
+              <span className="kv-card-num">{totalPedidos}</span>
+              <span className="kv-card-label">Pedidos</span>
             </div>
           </div>
-          <div className="dash-hero-avatar">{inicial}</div>
+          <div className="kv-card">
+            <span className="kv-card-icone">💰</span>
+            <div>
+              <span className="kv-card-num">{formatarValor(totalGasto)}</span>
+              <span className="kv-card-label">Vendas</span>
+            </div>
+          </div>
+          <div className="kv-card">
+            <span className="kv-card-icone">✅</span>
+            <div>
+              <span className="kv-card-num">{entregues}</span>
+              <span className="kv-card-label">Entregues</span>
+            </div>
+          </div>
+          <div className="kv-card">
+            <span className="kv-card-icone">↩️</span>
+            <div>
+              <span className="kv-card-num">{totalDevolucoes}</span>
+              <span className="kv-card-label">Devoluções</span>
+            </div>
+          </div>
         </section>
 
-        {/* DESTAQUE */}
-        {destaque && (
-          <section className="dash-destaque">
-            <div className="dash-destaque-glow"></div>
-            <span className="dash-destaque-emoji">{destaque.emoji || '📢'}</span>
-            <div className="dash-destaque-conteudo">
-              <span className="dash-destaque-badge">📢 Novidade</span>
-              <h2>{destaque.titulo}</h2>
-              <p>{destaque.mensagem}</p>
+        {/* GRÁFICO 7 DIAS + FEED */}
+        <section className="kv-duplo">
+          <div className="kv-painel">
+            <div className="kv-painel-cabecalho">
+              <h2>Vendas — últimos 7 dias</h2>
+              <strong>{formatarValor(total7d)}</strong>
             </div>
-          </section>
-        )}
-
-        {/* OUTROS AVISOS */}
-        {outrosAvisos.length > 0 && (
-          <section className="dash-avisos">
-            {outrosAvisos.map((a) => (
-              <div key={a.id} className="dash-aviso">
-                <span className="dash-aviso-emoji">{a.emoji || '📢'}</span>
-                <div>
-                  <strong>{a.titulo}</strong>
-                  <p>{a.mensagem}</p>
-                </div>
-              </div>
-            ))}
-          </section>
-        )}
-
-        {/* BENTO GRID: STATS + BARRAS */}
-        <section className="dash-bento">
-          <div className="bento-card sc-pedidos">
-            <span className="stat-icone">📦</span>
-            <div className="stat-info">
-              <span className="stat-num">{totalPedidos}</span>
-              <span className="stat-label">Pedidos</span>
-            </div>
-          </div>
-          <div className="bento-card sc-entregues">
-            <span className="stat-icone">✅</span>
-            <div className="stat-info">
-              <span className="stat-num">{entregues}</span>
-              <span className="stat-label">Entregues</span>
-            </div>
-          </div>
-          <div className="bento-card sc-andamento">
-            <span className="stat-icone">⏳</span>
-            <div className="stat-info">
-              <span className="stat-num">{emAndamento}</span>
-              <span className="stat-label">Em andamento</span>
-            </div>
-          </div>
-          <div className="bento-card sc-valor">
-            <span className="stat-icone">💰</span>
-            <div className="stat-info">
-              <span className="stat-num">{formatarValor(totalGasto)}</span>
-              <span className="stat-label">Em pedidos</span>
-            </div>
-          </div>
-          <div className="bento-card sc-devolucoes">
-            <span className="stat-icone">↩️</span>
-            <div className="stat-info">
-              <span className="stat-num">{totalDevolucoes}</span>
-              <span className="stat-label">Devoluções</span>
-            </div>
-          </div>
-
-          {/* GRÁFICO DE BARRAS (CSS) */}
-          <div className="bento-card bento-grafico">
-            <div className="bento-grafico-titulo">
-              <span>📊 Meus pedidos</span>
-              <strong>{taxaConclusao}% concluídos</strong>
-            </div>
-            {barras.length === 0 ? (
-              <p className="bento-grafico-vazio">Sem dados ainda — faça seu primeiro pedido!</p>
+            {total7d === 0 ? (
+              <p className="kv-vazio">Sem vendas registradas nos últimos 7 dias. Faça seu primeiro pedido!</p>
             ) : (
-              <div className="bento-barras">
-                {barras.map((b) => (
-                  <div key={b.status} className="bento-barra-linha">
-                    <span className="bento-barra-label" style={{ color: b.info.cor }}>{b.info.label}</span>
-                    <div className="bento-barra-trilho">
-                      <div className="bento-barra-preenchida" style={{ width: b.pct + '%', background: b.info.cor }}></div>
+              <div className="kv-barras">
+                {vendas7d.map((d) => (
+                  <div className="kv-barra-coluna" key={d.chave}>
+                    <div className="kv-barra-trilho">
+                      <div className="kv-barra" style={{ height: d.altura + '%' }}>
+                        <span>{d.total > 0 ? formatarValor(d.total) : ''}</span>
+                      </div>
                     </div>
-                    <span className="bento-barra-valor">{b.qtd}</span>
+                    <span className="kv-barra-label">{d.label}</span>
                   </div>
                 ))}
               </div>
             )}
           </div>
+
+          <div className="kv-painel">
+            <div className="kv-painel-cabecalho">
+              <h2>Atividades</h2>
+            </div>
+            <div className="kv-feed">
+              {atividades.length === 0 ? (
+                <p className="kv-vazio">Nenhuma atividade ainda.</p>
+              ) : (
+                atividades.map((a) => (
+                  <div className="kv-feed-item" key={a.id}>
+                    <span className="kv-feed-emoji">{a.emoji}</span>
+                    <div>
+                      <span>{a.titulo}</span>
+                      <small>{a.mensagem}</small>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
         </section>
 
-        {/* PROGRESSO */}
-        <section className="dash-progresso">
-          <div className="dash-progresso-info">
-            <span>Pedidos concluídos</span>
-            <strong>{taxaConclusao}%</strong>
+        {/* PEDIDOS RECENTES — TABELA */}
+        <section className="kv-painel">
+          <div className="kv-painel-cabecalho">
+            <h2>Pedidos recentes</h2>
+            <Link href="/pedido" className="kv-ver-todos">Ver todos →</Link>
           </div>
-          <div className="dash-progresso-barra">
-            <div className="dash-progresso-preenchido" style={{ width: taxaConclusao + '%' }}></div>
-          </div>
-        </section>
-
-        {/* AÇÕES RÁPIDAS */}
-        <section className="dash-acoes">
-          <Link href="/catalogo" className="acao-card">
-            <span className="acao-emoji">🛍️</span>
-            <span className="acao-nome">Catálogo</span>
-            <span className="acao-desc">Explorar produtos</span>
-          </Link>
-          <Link href="/pedido" className="acao-card">
-            <span className="acao-emoji">🛒</span>
-            <span className="acao-nome">Meu pedido</span>
-            <span className="acao-desc">Ver carrinho</span>
-          </Link>
-          <Link href="/devolucoes" className="acao-card">
-            <span className="acao-emoji">↩️</span>
-            <span className="acao-nome">Devoluções</span>
-            <span className="acao-desc">Acompanhar</span>
-          </Link>
-          <Link href="/conta" className="acao-card">
-            <span className="acao-emoji">👤</span>
-            <span className="acao-nome">Minha conta</span>
-            <span className="acao-desc">Meus dados</span>
-          </Link>
-        </section>
-
-        {/* ÚLTIMOS PEDIDOS */}
-        <section className="dash-pedidos">
-          <div className="dash-titulo-linha">
-            <h2 className="dash-titulo">🧾 Últimos pedidos</h2>
-            <Link href="/pedido" className="dash-ver-todos">Ver todos →</Link>
-          </div>
-
-          {ultimos.length === 0 ? (
-            <div className="dash-vazio">
-              <span className="dash-vazio-emoji">🛍️</span>
-              <h3>Nenhum pedido ainda</h3>
-              <p>Bora fazer seu primeiro pedido? É rapidinho!</p>
-              <Link href="/catalogo" className="dash-btn dash-btn-primario">Ver catálogo</Link>
+          {pedidosFiltrados.length === 0 ? (
+            <div className="kv-vazio">
+              <h3>{busca ? 'Nenhum pedido para "' + busca + '"' : 'Nenhum pedido ainda'}</h3>
+              <p>{busca ? 'Tente outro número ou status.' : 'Bora fazer seu primeiro pedido? É rapidinho!'}</p>
+              {!busca && <Link href="/catalogo" className="kv-btn-primario" style={{ marginTop: 14 }}>Ver catálogo</Link>}
             </div>
           ) : (
-            <div className="dash-pedido-lista">
-              {ultimos.map((p) => {
+            <>
+              <div className="kv-tabela-cabecalho">
+                <span>Pedido</span>
+                <span>Data</span>
+                <span>Status</span>
+                <span>Total</span>
+              </div>
+              {pedidosFiltrados.map((p) => {
                 const info = STATUS_INFO[p.status] || { label: p.status, cor: '#888' };
                 return (
-                  <div key={p.numero} className="pedido-row">
-                    <div className="pedido-row-info">
-                      <span className="pedido-row-num">#{p.numero}</span>
-                      <span className="pedido-row-data">{formatarData(p.criado_em)}</span>
-                    </div>
-                    <div className="pedido-row-right">
-                      <span className="pedido-row-status" style={{ background: info.cor + '1f', color: info.cor }}>{info.label}</span>
-                      <strong className="pedido-row-total">{formatarValor(p.total)}</strong>
-                    </div>
+                  <div className="kv-tabela-linha" key={p.numero}>
+                    <span className="kv-tabela-num">#{p.numero}</span>
+                    <span className="kv-tabela-data">{formatarData(p.criado_em)}</span>
+                    <span><span className="kv-status" style={{ background: info.cor + '1f', color: info.cor }}>{info.label}</span></span>
+                    <strong className="kv-tabela-total">{formatarValor(p.total)}</strong>
                   </div>
                 );
               })}
-            </div>
+            </>
           )}
         </section>
-      </div>
+      </main>
 
       <HotbarCliente />
     </div>
