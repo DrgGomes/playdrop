@@ -11,6 +11,10 @@ const ITENS = [
   { href: '/dashboard', label: 'Início', icone: '🏠' },
   { href: '/catalogo', label: 'Catálogo', icone: '🛍️' },
   { href: '/pedido', label: 'Pedido', icone: '📦' },
+  { href: '/vendas', label: 'Vendas', icone: '📈' },
+  { href: '/financeiro', label: 'Financeiro', icone: '💰' },
+  { href: '/produtos', label: 'Produtos', icone: '👕' },
+  { href: '/relatorios', label: 'Relatórios', icone: '📊' },
   { href: '/devolucoes', label: 'Devoluções', icone: '↩️' },
   { href: '/conta', label: 'Minha conta', icone: '👤' },
 ];
